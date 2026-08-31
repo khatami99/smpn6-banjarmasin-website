@@ -1,32 +1,65 @@
-# React + TypeScript + Vite
+# Website Resmi SMPN 6 Banjarmasin
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Website profil sekolah SMP Negeri 6 Banjarmasin (Sekolah Dahlia), dibangun dengan React + Vite + Firebase.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript**
+- **Vite** — build tool
+- **Tailwind CSS** — styling
+- **Firebase** (Firestore) — database konten
+- **TipTap** — rich text editor di panel admin
+- **React Router** — client-side routing
 
-## React Compiler
+## Halaman
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Halaman | Path |
+|---|---|
+| Beranda | `/` |
+| Profil Sekolah | `/profil` |
+| Akademik | `/akademik` |
+| Kesiswaan | `/kesiswaan` |
+| Prestasi | `/prestasi` |
+| Berita | `/berita` |
+| Admin | `/admin` |
 
-## Expanding the Oxlint configuration
+## Menjalankan Lokal
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+```bash
+# Install dependencies
+npm install
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Jalankan dev server
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Buka `http://localhost:5173`
+
+## Build & Deploy
+
+```bash
+# Build production
+npm run build
+
+# Deploy ke Firebase Hosting
+firebase deploy --only hosting
+```
+
+## Struktur Folder
+
+```
+src/
+├── components/     # Navbar, Footer, RichEditor, dll
+├── hooks/          # useFirestore (data fetching)
+├── pages/          # Halaman publik & admin
+├── types/          # TypeScript types
+└── assets/         # Gambar & logo
+```
+
+## Fitur Admin
+
+- Kelola berita & pengumuman
+- Kelola data ekskul & prestasi
+- Edit profil sekolah
+- Statistik sekolah
+- Rich text editor untuk isi berita
