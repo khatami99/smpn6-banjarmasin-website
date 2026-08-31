@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #111111;
+  background: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes kenburns {
+  0%   { transform: scale(1)    translateX(0)    translateY(0); }
+  100% { transform: scale(1.08) translateX(-1%)  translateY(-1%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0px 0px rgba(250, 225, 0, 0); }
+  50%       { box-shadow: 0 0 18px 4px rgba(250, 225, 0, 0.35); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.anim-float      { animation: float 4s ease-in-out infinite; }
+.anim-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.anim-spin-slow  { animation: spin-slow 30s linear infinite; }
+
+@layer components {
+  .btn-black {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-ink text-yellow font-semibold text-sm transition-all hover:-translate-y-px hover:bg-ink-2;
+  }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 border border-border-dk text-ink font-medium text-sm transition-all hover:border-ink hover:bg-surface;
+  }
+  .btn-yellow {
+    @apply inline-flex items-center gap-2 px-6 py-3 bg-yellow text-ink font-semibold text-sm transition-all hover:bg-yellow-dk;
+  }
+  .eyebrow {
+    @apply text-xs font-bold tracking-widest uppercase text-ink-3 mb-3;
+  }
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl font-normal leading-tight text-ink mb-3;
+  }
+}
