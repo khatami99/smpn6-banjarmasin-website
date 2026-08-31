@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: 'Kesiswaan', to: '/kesiswaan' },
   { label: 'Prestasi', to: '/prestasi' },
   { label: 'Berita', to: '/berita' },
+  { label: 'Galeri', to: '/galeri' },
 ]
 
 export default function Navbar() {

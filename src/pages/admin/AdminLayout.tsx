@@ -10,6 +10,7 @@ const NAV = [
   { label: 'Pengumuman', to: '/admin/pengumuman', icon: '📢' },
   { label: 'Ekskul', to: '/admin/ekskul', icon: '⚽' },
   { label: 'Prestasi', to: '/admin/prestasi', icon: '🏆' },
+  { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
 ]
 
 export default function AdminLayout() {

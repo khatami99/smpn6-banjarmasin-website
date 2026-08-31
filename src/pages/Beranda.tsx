@@ -1,17 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import heroImg1 from '../assets/SMPN_6_Banjarmasin.jpg'
-import heroImg2 from '../assets/IMG-20230922-WA0063-750x422.jpg'
-import heroImg3 from '../assets/IMG_4404aa.jpg'
-import heroImg4 from '../assets/1.webp'
-import heroImg5 from '../assets/1643784687442367-0.jpg'
-
-const HERO_IMAGES = [heroImg1, heroImg2, heroImg3, heroImg4, heroImg5]
-import { useStats } from '../hooks/useFirestore'
-import { useNews } from '../hooks/useFirestore'
-import { useEkskul } from '../hooks/useFirestore'
-import { usePrestasi } from '../hooks/useFirestore'
-import { useAnnouncement } from '../hooks/useFirestore'
+import { useStats, useNews, useEkskul, usePrestasi, useAnnouncement, useGaleri } from '../hooks/useFirestore'
 import type { NewsItem, Ekskul, Prestasi } from '../types'
 
 function formatDate(iso: string) {
@@ -44,23 +33,37 @@ export default function Beranda() {
   const { ekskul } = useEkskul(true)
   const { prestasi } = usePrestasi()
   const { announcement } = useAnnouncement()
+  const { galeri } = useGaleri()
+
+  const heroImages = useMemo(() => {
+    const fromGaleri = galeri.map(g => g.url)
+    const fromBerita = news.filter(n => n.foto).map(n => n.foto!)
+    const combined = [...fromGaleri, ...fromBerita]
+    // shuffle
+    for (let i = combined.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [combined[i], combined[j]] = [combined[j], combined[i]]
+    }
+    return combined.slice(0, 10)
+  }, [galeri, news])
 
   const [heroIndex, setHeroIndex] = useState(0)
   const [prevIndex, setPrevIndex] = useState<number | null>(null)
   const [fading, setFading] = useState(false)
 
   useEffect(() => {
+    if (heroImages.length < 2) return
     const id = setInterval(() => {
       setPrevIndex(heroIndex)
       setFading(true)
       setTimeout(() => {
-        setHeroIndex(i => (i + 1) % HERO_IMAGES.length)
+        setHeroIndex(i => (i + 1) % heroImages.length)
         setFading(false)
         setPrevIndex(null)
       }, 1000)
     }, 5000)
     return () => clearInterval(id)
-  }, [heroIndex])
+  }, [heroIndex, heroImages.length])
 
   const displayNews = news.slice(0, 4)
   const displayEkskul = ekskul.slice(0, 6)
@@ -76,16 +79,16 @@ export default function Beranda() {
           {prevIndex !== null && (
             <img
               key={`prev-${prevIndex}`}
-              src={HERO_IMAGES[prevIndex]}
+              src={heroImages[prevIndex]}
               alt=""
               aria-hidden="true"
               className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
               style={{ opacity: fading ? 0 : 1, transition: 'opacity 1s ease-in-out', zIndex: 0 }}
             />
           )}
-          <img
+          {heroImages.length > 0 && <img
             key={`curr-${heroIndex}`}
-            src={HERO_IMAGES[heroIndex]}
+            src={heroImages[heroIndex]}
             alt=""
             aria-hidden="true"
             className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
@@ -94,7 +97,7 @@ export default function Beranda() {
               animation: 'kenburns 6s ease-out forwards',
               zIndex: 1,
             }}
-          />
+          />}
           {/* Overlay */}
           <div className="absolute inset-0 bg-white/75 z-10" />
 

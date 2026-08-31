@@ -28,9 +28,9 @@ export default function Login() {
     <div className="min-h-screen bg-off-white flex flex-col items-center justify-center p-6">
       {/* Logo */}
       <div className="flex items-center gap-3 mb-10">
-        <div className="w-10 h-10 bg-ink flex items-center justify-center">
-          <span className="font-serif text-2xl text-yellow">6</span>
-        </div>
+          <div className="w-9 h-9 flex-shrink-0 overflow-hidden">
+            <img src="/Logo SMPN 6 Banjarmasin.png" alt="Logo SMPN 6 Banjarmasin" className="w-full h-full object-contain" />
+          </div>
         <div>
           <div className="font-semibold text-ink">SMPN 6 Banjarmasin</div>
           <div className="text-[11px] text-ink-4">Panel Admin</div>

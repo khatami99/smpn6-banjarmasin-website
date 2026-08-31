@@ -15,6 +15,8 @@ import AdminBerita from './pages/admin/AdminBerita'
 import AdminPengumuman from './pages/admin/AdminPengumuman'
 import AdminEkskul from './pages/admin/AdminEkskul'
 import AdminPrestasi from './pages/admin/AdminPrestasi'
+import AdminGaleri from './pages/admin/AdminGaleri'
+import Galeri from './pages/Galeri'
 
 export default function App() {
   return (
@@ -28,6 +30,7 @@ export default function App() {
           <Route path="/prestasi" element={<PrestasiPage />} />
           <Route path="/berita" element={<BeritaList />} />
           <Route path="/berita/:id" element={<BeritaDetail />} />
+          <Route path="/galeri" element={<Galeri />} />
         </Route>
 
         <Route path="/admin/login" element={<Login />} />
@@ -39,6 +42,7 @@ export default function App() {
           <Route path="pengumuman" element={<AdminPengumuman />} />
           <Route path="ekskul" element={<AdminEkskul />} />
           <Route path="prestasi" element={<AdminPrestasi />} />
+          <Route path="galeri" element={<AdminGaleri />} />
         </Route>
       </Routes>
     </BrowserRouter>

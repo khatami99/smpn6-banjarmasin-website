@@ -5,7 +5,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { defaultStats, defaultProfile } from '../data/defaults'
-import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement } from '../types'
+import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement, GaleriItem } from '../types'
 
 // ─── School Stats ───────────────────────────────────────────
 export function useStats() {
@@ -161,6 +161,35 @@ export function usePrestasi() {
   }
 
   return { prestasi, loading, addPrestasi, updatePrestasi, deletePrestasi }
+}
+
+// ─── Galeri ──────────────────────────────────────────────────
+export function useGaleri() {
+  const [galeri, setGaleri] = useState<GaleriItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const q = query(collection(db, 'galeri'), orderBy('tanggal', 'desc'))
+    const unsub = onSnapshot(q, (snap) => {
+      setGaleri(snap.docs.map(d => ({ id: d.id, ...d.data() } as GaleriItem)))
+      setLoading(false)
+    }, () => setLoading(false))
+    return unsub
+  }, [])
+
+  const addGaleri = async (data: Omit<GaleriItem, 'id'>) => {
+    await addDoc(collection(db, 'galeri'), { ...data, createdAt: new Date().toISOString() })
+  }
+
+  const updateGaleri = async (id: string, data: Partial<GaleriItem>) => {
+    await updateDoc(doc(db, 'galeri', id), data)
+  }
+
+  const deleteGaleri = async (id: string) => {
+    await deleteDoc(doc(db, 'galeri', id))
+  }
+
+  return { galeri, loading, addGaleri, updateGaleri, deleteGaleri }
 }
 
 // ─── Auth hook ───────────────────────────────────────────────

@@ -39,6 +39,16 @@ export interface NewsItem {
   tanggal: string // ISO date string
   penulis: string
   published: boolean
+  foto?: string
+  createdAt?: string
+}
+
+export interface GaleriItem {
+  id?: string
+  judul: string
+  deskripsi?: string
+  url: string
+  tanggal: string
   createdAt?: string
 }
 
