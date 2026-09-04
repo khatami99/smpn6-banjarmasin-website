@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { usePrestasi } from '../hooks/useFirestore'
+import { usePageMeta } from '../hooks/usePageMeta'
+import SafeImage from '../components/SafeImage'
 import type { Prestasi } from '../types'
 
 const TINGKAT_ORDER = ['Internasional', 'Nasional', 'Provinsi', 'Kota', 'Sekolah']
@@ -16,6 +18,11 @@ export default function PrestasiPage() {
   const { prestasi, loading } = usePrestasi()
   const [filter, setFilter] = useState<string>('Semua')
   const [tahunFilter, setTahunFilter] = useState<string>('Semua')
+
+  usePageMeta(
+    'Prestasi',
+    'Rekam jejak prestasi akademik, olahraga, dan seni siswa SMPN 6 Banjarmasin dari tingkat kota hingga nasional.',
+  )
 
   const tahunList = ['Semua', ...Array.from(new Set(prestasi.map(p => String(p.tahun)))).sort((a, b) => +b - +a)]
   const tingkatList = ['Semua', ...TINGKAT_ORDER.filter(t => prestasi.some(p => p.tingkat === t))]
@@ -89,20 +96,26 @@ export default function PrestasiPage() {
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {byYear[year].map((p: Prestasi) => (
-                    <div key={p.id} className="border border-border p-5 hover:border-ink transition-colors">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 tracking-wide
-                          ${TINGKAT_STYLE[p.tingkat] ?? 'bg-surface text-ink'}`}>
-                          {p.tingkat}
-                        </span>
-                        <span className="text-[11px] text-ink-4">{p.peringkat}</span>
-                      </div>
-                      <div className="text-[14px] font-semibold text-ink leading-snug mb-2">{p.judul}</div>
-                      <div className="text-[12px] text-ink-4">{p.pemenang}
-                        {p.kelas && p.kelas !== '-' && <span> · Kelas {p.kelas}</span>}
-                      </div>
-                      <div className="mt-2">
-                        <span className="text-[10px] bg-surface text-ink-3 px-1.5 py-0.5">{p.bidang}</span>
+                    <div key={p.id} className="border border-border hover:border-ink transition-colors overflow-hidden">
+                      {p.foto && (
+                        <SafeImage src={p.foto} alt={p.judul}
+                          className="w-full h-40 object-cover" />
+                      )}
+                      <div className="p-5">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 tracking-wide
+                            ${TINGKAT_STYLE[p.tingkat] ?? 'bg-surface text-ink'}`}>
+                            {p.tingkat}
+                          </span>
+                          <span className="text-[11px] text-ink-4">{p.peringkat}</span>
+                        </div>
+                        <div className="text-[14px] font-semibold text-ink leading-snug mb-2">{p.judul}</div>
+                        <div className="text-[12px] text-ink-4">{p.pemenang}
+                          {p.kelas && p.kelas !== '-' && <span> · Kelas {p.kelas}</span>}
+                        </div>
+                        <div className="mt-2">
+                          <span className="text-[10px] bg-surface text-ink-3 px-1.5 py-0.5">{p.bidang}</span>
+                        </div>
                       </div>
                     </div>
                   ))}

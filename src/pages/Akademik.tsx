@@ -1,4 +1,11 @@
+import { usePageMeta } from '../hooks/usePageMeta'
+
 export default function Akademik() {
+  usePageMeta(
+    'Akademik',
+    'Kurikulum Merdeka, struktur mata pelajaran, dan kalender akademik SMPN 6 Banjarmasin.',
+  )
+
   const MAPEL = [
     { nama: 'Pendidikan Agama & Budi Pekerti', jam: 3 },
     { nama: 'Pendidikan Pancasila', jam: 3 },

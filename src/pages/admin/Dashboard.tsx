@@ -1,34 +1,18 @@
 import { Link } from 'react-router-dom'
-import { useStats, useNews, useEkskul, usePrestasi, useSeedData } from '../../hooks/useFirestore'
-import { useState } from 'react'
+import { useStats, useNews, useEkskul, usePrestasi, useGaleri } from '../../hooks/useFirestore'
 
 export default function Dashboard() {
   const { stats } = useStats()
   const { news } = useNews(false)
   const { ekskul } = useEkskul(false)
   const { prestasi } = usePrestasi()
-  const { seedAll } = useSeedData()
-  const [seeding, setSeeding] = useState(false)
-  const [seeded, setSeeded] = useState(false)
-
-  const handleSeed = async () => {
-    if (!confirm('Ini akan mengisi database dengan data contoh. Lanjutkan?')) return
-    setSeeding(true)
-    try {
-      await seedAll()
-      setSeeded(true)
-    } catch (e) {
-      alert('Gagal mengisi data. Cek konsol browser.')
-      console.error(e)
-    } finally {
-      setSeeding(false)
-    }
-  }
+  const { galeri } = useGaleri()
 
   const CARDS = [
     { label: 'Total Berita', val: news.length, sub: `${news.filter(n => n.published).length} dipublikasi`, to: '/admin/berita', color: 'bg-white' },
     { label: 'Ekskul', val: ekskul.length, sub: `${ekskul.filter(e => e.aktif).length} aktif`, to: '/admin/ekskul', color: 'bg-white' },
     { label: 'Prestasi', val: prestasi.length, sub: 'total data', to: '/admin/prestasi', color: 'bg-white' },
+    { label: 'Foto Galeri', val: galeri.length, sub: 'tampil di beranda', to: '/admin/galeri', color: 'bg-white' },
     { label: 'Siswa', val: stats.siswa.toLocaleString('id-ID'), sub: 'siswa aktif', to: '/admin/statistik', color: 'bg-yellow' },
   ]
 
@@ -39,6 +23,7 @@ export default function Dashboard() {
     { label: 'Pengumuman Banner', desc: 'Teks pengumuman di strip halaman utama', to: '/admin/pengumuman', icon: '📢' },
     { label: 'Kelola Ekskul', desc: 'Data ekstrakurikuler dan jadwal', to: '/admin/ekskul', icon: '⚽' },
     { label: 'Kelola Prestasi', desc: 'Data pencapaian dan penghargaan', to: '/admin/prestasi', icon: '🏆' },
+    { label: 'Kelola Galeri', desc: 'Foto dokumentasi & slideshow beranda', to: '/admin/galeri', icon: '🖼️' },
   ]
 
   return (
@@ -49,7 +34,7 @@ export default function Dashboard() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
         {CARDS.map(c => (
           <Link key={c.label} to={c.to}
             className={`${c.color} border border-border p-5 hover:border-ink transition-colors no-underline`}>
@@ -77,27 +62,6 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
-
-      {/* Seed data section */}
-      {(news.length === 0 || seeded) && (
-        <div className="bg-yellow-bg border border-yellow/40 p-6">
-          <div className="text-[13px] font-semibold text-ink mb-1">
-            {seeded ? '✅ Data contoh berhasil diisi!' : '⚠️ Database masih kosong'}
-          </div>
-          <p className="text-[13px] text-ink-3 mb-4">
-            {seeded
-              ? 'Data contoh sudah diisi. Anda bisa mulai mengedit sesuai kebutuhan.'
-              : 'Isi database dengan data contoh untuk melihat tampilan website secara langsung.'
-            }
-          </p>
-          {!seeded && (
-            <button onClick={handleSeed} disabled={seeding}
-              className="btn-black disabled:opacity-50">
-              {seeding ? 'Mengisi data...' : 'Isi Data Contoh'}
-            </button>
-          )}
-        </div>
-      )}
 
       {/* View site link */}
       <div className="mt-6 pt-6 border-t border-border">

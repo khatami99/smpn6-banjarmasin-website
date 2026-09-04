@@ -192,30 +192,3 @@ export function useGaleri() {
   return { galeri, loading, addGaleri, updateGaleri, deleteGaleri }
 }
 
-// ─── Auth hook ───────────────────────────────────────────────
-export function useSeedData() {
-  const seedAll = async () => {
-    const { defaultStats, defaultProfile, defaultNews, defaultEkskul, defaultPrestasi } = await import('../data/defaults')
-
-    await setDoc(doc(db, 'settings', 'stats'), defaultStats)
-    await setDoc(doc(db, 'settings', 'profile'), defaultProfile)
-    await setDoc(doc(db, 'settings', 'announcement'), {
-      teks: 'PPDB Tahun Ajaran 2026/2027 dibuka mulai 1 September 2026 — Daftar online sekarang',
-      link: '#',
-      linkLabel: 'Lihat detail',
-      aktif: true,
-    })
-
-    for (const n of defaultNews) {
-      await addDoc(collection(db, 'news'), { ...n, createdAt: new Date().toISOString() })
-    }
-    for (const e of defaultEkskul) {
-      await addDoc(collection(db, 'ekskul'), e)
-    }
-    for (const p of defaultPrestasi) {
-      await addDoc(collection(db, 'prestasi'), { ...p, createdAt: new Date().toISOString() })
-    }
-  }
-
-  return { seedAll }
-}

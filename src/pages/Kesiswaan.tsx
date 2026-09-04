@@ -1,4 +1,5 @@
 import { useEkskul } from '../hooks/useFirestore'
+import { usePageMeta } from '../hooks/usePageMeta'
 import type { Ekskul } from '../types'
 
 const KAT_COLORS: Record<string, string> = {
@@ -11,6 +12,11 @@ const KAT_COLORS: Record<string, string> = {
 
 export default function Kesiswaan() {
   const { ekskul, loading } = useEkskul(false)
+
+  usePageMeta(
+    'Kesiswaan',
+    'OSIS, ekstrakurikuler, dan tata tertib siswa SMPN 6 Banjarmasin.',
+  )
 
   const aktif = ekskul.filter(e => e.aktif)
   return (

@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
+import ImageUrlField from '../../components/ImageUrlField'
 import { usePrestasi } from '../../hooks/useFirestore'
 import type { Prestasi } from '../../types'
 
 const EMPTY: Omit<Prestasi, 'id'> = {
   judul: '', pemenang: '', kelas: '', tingkat: 'Kota',
-  tahun: new Date().getFullYear(), bidang: '', peringkat: '',
+  tahun: new Date().getFullYear(), bidang: '', peringkat: '', foto: '',
 }
 
 const TINGKAT_LIST = ['Sekolah', 'Kota', 'Provinsi', 'Nasional', 'Internasional'] as const
@@ -23,16 +24,18 @@ export default function AdminPrestasi() {
   const [form, setForm] = useState<Omit<Prestasi, 'id'>>(EMPTY)
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [fotoValid, setFotoValid] = useState(true)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
       setForm(p => ({ ...p, [key]: key === 'tahun' ? Number(e.target.value) : e.target.value }))
 
-  const openAdd = () => { setForm(EMPTY); setEditId(null); setMode('add') }
+  const openAdd = () => { setForm(EMPTY); setEditId(null); setFotoValid(true); setMode('add') }
   const openEdit = (p: Prestasi) => {
     setForm({ judul: p.judul, pemenang: p.pemenang, kelas: p.kelas,
-      tingkat: p.tingkat, tahun: p.tahun, bidang: p.bidang, peringkat: p.peringkat })
+      tingkat: p.tingkat, tahun: p.tahun, bidang: p.bidang, peringkat: p.peringkat, foto: p.foto ?? '' })
     setEditId(p.id!)
+    setFotoValid(true)
     setMode('edit')
   }
 
@@ -105,11 +108,21 @@ export default function AdminPrestasi() {
               </select>
             </div>
           </div>
-          <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="btn-black disabled:opacity-50">
+          <ImageUrlField
+            label="Foto Prestasi"
+            value={form.foto ?? ''}
+            onChange={url => setForm(p => ({ ...p, foto: url }))}
+            onValidChange={setFotoValid}
+          />
+
+          <div className="flex items-center gap-3 pt-2">
+            <button type="submit" disabled={saving || !fotoValid} className="btn-black disabled:opacity-50">
               {saving ? 'Menyimpan...' : 'Simpan Prestasi'}
             </button>
             <button type="button" onClick={() => setMode('list')} className="btn-outline">Batal</button>
+            {!fotoValid && (
+              <span className="text-[12px] text-red-600">Perbaiki URL foto dulu</span>
+            )}
           </div>
         </form>
       </div>

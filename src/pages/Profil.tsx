@@ -1,8 +1,14 @@
 import { useProfile, useStats } from '../hooks/useFirestore'
+import { usePageMeta } from '../hooks/usePageMeta'
 
 export default function Profil() {
   const { profile } = useProfile()
   const { stats } = useStats()
+
+  usePageMeta(
+    'Profil Sekolah',
+    'Identitas, sejarah, visi misi, dan kontak SMP Negeri 6 Banjarmasin.',
+  )
 
   return (
     <>

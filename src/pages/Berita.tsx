@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useNews } from '../hooks/useFirestore'
+import { usePageMeta } from '../hooks/usePageMeta'
+import SafeImage from '../components/SafeImage'
 import type { NewsItem } from '../types'
 
 const KATEGORI_COLOR: Record<string, string> = {
@@ -26,10 +28,20 @@ function formatDate(iso: string) {
   }
 }
 
+/** Berita lama disimpan sebagai teks biasa, yang baru sebagai HTML dari editor. */
+function isHtml(text: string) {
+  return /<(p|div|h[1-6]|ul|ol|li|br|strong|em|u|blockquote)\b[^>]*>/i.test(text)
+}
+
 // ─── BERITA LIST ──────────────────────────────────────────────
 export function BeritaList() {
   const { news, loading } = useNews(true)
   const [kategori, setKategori] = useState('Semua')
+
+  usePageMeta(
+    'Berita & Pengumuman',
+    'Kabar terbaru dari SMPN 6 Banjarmasin — kegiatan sekolah, prestasi siswa, PPDB, dan pengumuman penting.',
+  )
 
   const allKat = ['Semua', 'Kegiatan', 'Prestasi', 'Akademik', 'PPDB', 'Pengumuman']
   const filtered = kategori === 'Semua' ? news : news.filter(n => n.kategori === kategori)
@@ -89,6 +101,12 @@ export function BeritaList() {
                     <div className="text-[13px] text-ink-4 leading-relaxed line-clamp-2">{item.ringkasan}</div>
                     <div className="text-[12px] text-ink-4 mt-2">Oleh {item.penulis}</div>
                   </div>
+                  {item.foto && (
+                    <div className="flex-shrink-0 hidden sm:block w-32 md:w-40 self-start">
+                      <SafeImage src={item.foto} alt={item.judul}
+                        className="w-full aspect-[4/3] object-cover" />
+                    </div>
+                  )}
                   <div className="flex-shrink-0 self-center hidden md:block">
                     <span className="text-ink-4 group-hover:text-ink transition-colors text-xl">→</span>
                   </div>
@@ -109,6 +127,8 @@ export function BeritaDetail() {
 
   const item = news.find(n => n.id === id)
   const lainnya = news.filter(n => n.id !== id).slice(0, 3)
+
+  usePageMeta(item?.judul, item?.ringkasan)
 
   if (loading) {
     return (
@@ -152,11 +172,24 @@ export function BeritaDetail() {
           <span>{item.penulis}</span>
         </div>
 
-        <div className="prose-custom">
-          {item.isi.split('\n').map((para, i) => (
-            para.trim() && <p key={i} className="text-[15px] text-ink-3 leading-[1.8] mb-4">{para}</p>
-          ))}
-        </div>
+        {item.foto && (
+          <figure className="mb-8">
+            <SafeImage src={item.foto} alt={item.judul}
+              className="w-full max-h-[460px] object-cover border border-border" />
+          </figure>
+        )}
+
+        {isHtml(item.isi) ? (
+          // Isi dari editor teks admin — sudah berupa HTML.
+          <div className="prose-custom" dangerouslySetInnerHTML={{ __html: item.isi }} />
+        ) : (
+          // Berita lama: teks biasa yang dipisah baris baru.
+          <div className="prose-custom">
+            {item.isi.split('\n').map((para, i) => (
+              para.trim() ? <p key={i}>{para}</p> : null
+            ))}
+          </div>
+        )}
       </article>
 
       {/* Sidebar - berita lainnya */}

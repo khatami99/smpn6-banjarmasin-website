@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useStats, useNews, useEkskul, usePrestasi, useAnnouncement, useGaleri } from '../hooks/useFirestore'
+import { usePageMeta } from '../hooks/usePageMeta'
 import type { NewsItem, Ekskul, Prestasi } from '../types'
 
 function formatDate(iso: string) {
@@ -35,17 +36,19 @@ export default function Beranda() {
   const { announcement } = useAnnouncement()
   const { galeri } = useGaleri()
 
+  usePageMeta(
+    undefined,
+    'Website resmi SMP Negeri 6 Banjarmasin (SMPN 6 Dahlia) — profil sekolah, berita, prestasi siswa, ekstrakurikuler, dan informasi akademik.',
+  )
+
   const heroImages = useMemo(() => {
-    const fromGaleri = galeri.map(g => g.url)
-    const fromBerita = news.filter(n => n.foto).map(n => n.foto!)
-    const combined = [...fromGaleri, ...fromBerita]
-    // shuffle
+    const combined = galeri.map(g => g.url)
     for (let i = combined.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [combined[i], combined[j]] = [combined[j], combined[i]]
     }
     return combined.slice(0, 10)
-  }, [galeri, news])
+  }, [galeri])
 
   const [heroIndex, setHeroIndex] = useState(0)
   const [prevIndex, setPrevIndex] = useState<number | null>(null)
@@ -241,17 +244,17 @@ export default function Beranda() {
             </div>
             <div className="divide-y divide-border">
               {[
-                { label: 'Pendaftaran PPDB Online', href: '#' },
-                { label: 'Kalender Akademik', href: '/akademik' },
-                { label: 'Data Guru & Staf', href: '/profil#guru' },
-                { label: 'Daftar Prestasi', href: '/prestasi' },
-                { label: 'Kontak Sekolah', href: '/profil#kontak' },
+                { label: 'Kalender Akademik', to: '/akademik#kalender' },
+                { label: 'Daftar Prestasi', to: '/prestasi' },
+                { label: 'Galeri Foto', to: '/galeri' },
+                { label: 'Ekstrakurikuler', to: '/kesiswaan' },
+                { label: 'Kontak Sekolah', to: '/profil#kontak' },
               ].map(l => (
-                <a key={l.label} href={l.href}
+                <Link key={l.label} to={l.to}
                   className="flex items-center justify-between px-5 py-3 text-[13px] text-ink-3 hover:bg-surface hover:text-ink transition-colors no-underline">
                   <span>{l.label}</span>
                   <span className="text-ink-4">→</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

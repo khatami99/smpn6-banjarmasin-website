@@ -22,24 +22,29 @@ body {
   100% { transform: scale(1.08) translateX(-1%)  translateY(-1%); }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
-}
+@layer components {
+  /* Isi berita dari editor teks (TipTap) */
+  .prose-custom {
+    @apply text-[15px] text-ink-3 leading-[1.8];
+  }
+  .prose-custom > :first-child { @apply mt-0; }
+  .prose-custom > :last-child  { @apply mb-0; }
+  .prose-custom p              { @apply mb-4; }
+  .prose-custom h2             { @apply font-serif text-2xl text-ink leading-snug mt-9 mb-3; }
+  .prose-custom h3             { @apply font-serif text-xl text-ink leading-snug mt-7 mb-2; }
+  .prose-custom ul             { @apply list-disc pl-6 mb-4 space-y-1.5; }
+  .prose-custom ol             { @apply list-decimal pl-6 mb-4 space-y-1.5; }
+  .prose-custom li p           { @apply mb-0; }
+  .prose-custom blockquote     { @apply border-l-[3px] border-yellow pl-4 py-0.5 my-6 italic text-ink-2; }
+  .prose-custom strong         { @apply font-semibold text-ink; }
+  .prose-custom a              { @apply text-ink underline; }
+  .prose-custom img            { @apply max-w-full h-auto my-6; }
+  .prose-custom hr             { @apply border-0 border-t border-border my-9; }
+  .prose-custom code           { @apply bg-surface px-1.5 py-0.5 text-[13px] font-mono; }
 
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 0px 0px rgba(250, 225, 0, 0); }
-  50%       { box-shadow: 0 0 18px 4px rgba(250, 225, 0, 0.35); }
+  /* Area edit di panel admin memakai gaya yang sama agar WYSIWYG */
+  .prose-custom.ProseMirror:focus { @apply outline-none; }
 }
-
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.anim-float      { animation: float 4s ease-in-out infinite; }
-.anim-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
-.anim-spin-slow  { animation: spin-slow 30s linear infinite; }
 
 @layer components {
   .btn-black {

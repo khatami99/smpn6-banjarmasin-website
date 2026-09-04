@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import RichEditor from '../../components/RichEditor'
+import ImageUrlField from '../../components/ImageUrlField'
 import { useNews } from '../../hooks/useFirestore'
 import type { NewsItem } from '../../types'
 
@@ -27,16 +28,18 @@ export default function AdminBerita() {
   const [form, setForm] = useState<Omit<NewsItem, 'id'>>(EMPTY)
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [fotoValid, setFotoValid] = useState(true)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm(p => ({ ...p, [key]: e.target.value }))
 
-  const openAdd = () => { setForm(EMPTY); setEditId(null); setMode('add') }
+  const openAdd = () => { setForm(EMPTY); setEditId(null); setFotoValid(true); setMode('add') }
   const openEdit = (n: NewsItem) => {
     setForm({ judul: n.judul, isi: n.isi, ringkasan: n.ringkasan, kategori: n.kategori,
-      tanggal: n.tanggal, penulis: n.penulis, published: n.published })
+      tanggal: n.tanggal, penulis: n.penulis, published: n.published, foto: n.foto ?? '' })
     setEditId(n.id!)
+    setFotoValid(true)
     setMode('edit')
   }
 
@@ -96,25 +99,12 @@ export default function AdminBerita() {
             <input className={INPUT} value={form.penulis} onChange={set('penulis')} placeholder="Tim Humas" />
           </div>
 
-          <div>
-            <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
-              Foto Berita
-              <span className="ml-1 font-normal text-ink-4 normal-case tracking-normal">(URL gambar, opsional)</span>
-            </label>
-            <input className={INPUT} value={form.foto ?? ''} onChange={set('foto')} placeholder="https://..." />
-            <div className="mt-2 bg-surface border border-border px-3 py-2.5 text-[12px] text-ink-3 space-y-1">
-              <p className="font-semibold text-ink-2">Cara mendapatkan URL foto:</p>
-              <p>1. Upload foto ke <a href="https://imgbb.com" target="_blank" rel="noreferrer" className="text-ink underline">ImgBB.com</a> (gratis, tanpa daftar)</p>
-              <p>2. Setelah upload, klik foto → klik kanan gambar → <em>Copy image address</em></p>
-              <p>3. Paste link tersebut di kolom di atas</p>
-            </div>
-            {form.foto && (
-              <div className="mt-2 border border-border overflow-hidden">
-                <img src={form.foto} alt="Preview" className="w-full max-h-48 object-cover"
-                  onError={e => (e.currentTarget.style.display = 'none')} />
-              </div>
-            )}
-          </div>
+          <ImageUrlField
+            label="Foto Berita"
+            value={form.foto ?? ''}
+            onChange={url => setForm(p => ({ ...p, foto: url }))}
+            onValidChange={setFotoValid}
+          />
 
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
@@ -141,11 +131,14 @@ export default function AdminBerita() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button type="submit" disabled={saving} className="btn-black disabled:opacity-50">
+            <button type="submit" disabled={saving || !fotoValid} className="btn-black disabled:opacity-50">
               {saving ? 'Menyimpan...' : 'Simpan Berita'}
             </button>
             <button type="button" onClick={() => setMode('list')}
               className="btn-outline">Batal</button>
+            {!fotoValid && (
+              <span className="text-[12px] text-red-600">Perbaiki URL foto dulu</span>
+            )}
           </div>
         </form>
       </div>

@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
+import ScrollToTop from './components/ScrollToTop'
+import NotFound from './pages/NotFound'
 import Beranda from './pages/Beranda'
 import Profil from './pages/Profil'
 import Akademik from './pages/Akademik'
@@ -21,6 +23,7 @@ import Galeri from './pages/Galeri'
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Beranda />} />
@@ -31,6 +34,7 @@ export default function App() {
           <Route path="/berita" element={<BeritaList />} />
           <Route path="/berita/:id" element={<BeritaDetail />} />
           <Route path="/galeri" element={<Galeri />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
 
         <Route path="/admin/login" element={<Login />} />
