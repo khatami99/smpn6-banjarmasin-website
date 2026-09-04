@@ -7,17 +7,29 @@ export default function AdminStatistik() {
   const [form, setForm] = useState<SchoolStats>(stats)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [dirty, setDirty] = useState(false)
 
-  useEffect(() => { setForm(stats) }, [stats])
+  // Tanpa penjaga `dirty`, snapshot realtime menimpa isian yang sedang diketik.
+  useEffect(() => {
+    if (!dirty) setForm(stats)
+  }, [stats, dirty])
+
+  useEffect(() => {
+    if (!dirty) return
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [dirty])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSaving(true)
     try {
       await updateStats(form)
+      setDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
-    } catch (err) {
+    } catch {
       alert('Gagal menyimpan. Coba lagi.')
     } finally {
       setSaving(false)
@@ -53,11 +65,16 @@ export default function AdminStatistik() {
             <input
               type={f.type ?? 'text'}
               value={form[f.key]}
-              onChange={e => setForm(prev => ({
-                ...prev,
-                [f.key]: f.type === 'number' ? Number(e.target.value) : e.target.value
-              }))}
-              className="w-full border border-border px-3 py-2.5 text-[14px] text-ink 
+              min={f.type === 'number' ? 0 : undefined}
+              required
+              onChange={e => {
+                setDirty(true)
+                setForm(prev => ({
+                  ...prev,
+                  [f.key]: f.type === 'number' ? Number(e.target.value) : e.target.value
+                }))
+              }}
+              className="w-full border border-border px-3 py-2.5 text-[14px] text-ink
                          focus:outline-none focus:border-ink transition-colors"
             />
           </div>
@@ -70,6 +87,9 @@ export default function AdminStatistik() {
           </button>
           {saved && (
             <span className="text-[13px] text-green font-medium">✓ Tersimpan!</span>
+          )}
+          {dirty && !saved && (
+            <span className="text-[13px] text-amber-700">Ada perubahan yang belum disimpan</span>
           )}
         </div>
       </form>

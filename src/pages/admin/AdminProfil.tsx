@@ -21,15 +21,29 @@ export default function AdminProfil() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [misiText, setMisiText] = useState('')
+  const [dirty, setDirty] = useState(false)
 
+  // Data profil datang lewat onSnapshot (realtime). Tanpa penjaga `dirty`,
+  // perubahan dari tab/admin lain akan menimpa isian yang sedang diketik.
   useEffect(() => {
+    if (dirty) return
     setForm(profile)
     setMisiText(profile.misi.join('\n'))
-  }, [profile])
+  }, [profile, dirty])
+
+  // Peringatkan kalau menutup tab dengan perubahan yang belum disimpan
+  useEffect(() => {
+    if (!dirty) return
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault()
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [dirty])
 
   const set = (key: keyof SchoolProfile) => (
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setDirty(true)
       setForm(prev => ({ ...prev, [key]: e.target.value }))
+    }
   )
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,6 +52,7 @@ export default function AdminProfil() {
     try {
       const misi = misiText.split('\n').map(m => m.trim()).filter(Boolean)
       await updateProfile({ ...form, misi })
+      setDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch {
@@ -74,6 +89,9 @@ export default function AdminProfil() {
               <input className={INPUT} value={form.statusSekolah} onChange={set('statusSekolah')} />
             </Field>
           </div>
+          <Field label="Bentuk Pendidikan" desc="Contoh: SMP">
+            <input className={INPUT} value={form.bentukPendidikan} onChange={set('bentukPendidikan')} />
+          </Field>
           <Field label="Kepala Sekolah">
             <input className={INPUT} value={form.kepalaSekolah} onChange={set('kepalaSekolah')} />
           </Field>
@@ -106,6 +124,9 @@ export default function AdminProfil() {
               <input className={INPUT} value={form.kodePos} onChange={set('kodePos')} />
             </Field>
           </div>
+          <Field label="Provinsi">
+            <input className={INPUT} value={form.provinsi} onChange={set('provinsi')} />
+          </Field>
           <Field label="Telepon">
             <input className={INPUT} value={form.telepon} onChange={set('telepon')} />
           </Field>
@@ -127,8 +148,8 @@ export default function AdminProfil() {
           </Field>
           <Field label="Misi Sekolah"
             desc="Tulis setiap misi di baris baru (Enter untuk misi berikutnya)">
-            <textarea className={TEXTAREA} value={misiText}
-              onChange={e => setMisiText(e.target.value)} rows={6} />
+            <textarea className={TEXTAREA} value={misiText} rows={6}
+              onChange={e => { setDirty(true); setMisiText(e.target.value) }} />
           </Field>
           <Field label="Tujuan Sekolah">
             <textarea className={TEXTAREA} value={form.tujuan} onChange={set('tujuan')} rows={3} />
@@ -143,6 +164,9 @@ export default function AdminProfil() {
             {saving ? 'Menyimpan...' : 'Simpan Semua Perubahan'}
           </button>
           {saved && <span className="text-[13px] text-green font-medium">✓ Tersimpan!</span>}
+          {dirty && !saved && (
+            <span className="text-[13px] text-amber-700">Ada perubahan yang belum disimpan</span>
+          )}
         </div>
       </form>
     </div>

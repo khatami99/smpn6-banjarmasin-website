@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
@@ -101,7 +101,10 @@ export default function AdminLayout() {
         </header>
 
         <main className="flex-1 overflow-auto">
-          <Outlet />
+          {/* Sidebar tetap terlihat saat halaman admin lain sedang dimuat */}
+          <Suspense fallback={<div className="p-10 text-ink-4 text-sm">Memuat…</div>}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
     </div>

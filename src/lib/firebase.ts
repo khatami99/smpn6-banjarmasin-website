@@ -1,6 +1,5 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRczsyXPHKadZbrrjRJ1ijk7s-BIa9eEc",
@@ -14,5 +13,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
-export const auth = getAuth(app)
+
+// Auth sengaja dipisah ke lib/auth.ts agar paket firebase/auth hanya ikut
+// terunduh saat panel admin dibuka, bukan oleh semua pengunjung.
 export default app

@@ -17,7 +17,7 @@ export default function Login() {
     try {
       await login(email, password)
       navigate('/admin')
-    } catch (err: any) {
+    } catch {
       setError('Email atau password salah. Coba lagi.')
     } finally {
       setLoading(false)

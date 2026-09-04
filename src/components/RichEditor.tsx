@@ -34,7 +34,10 @@ function ToolBtn({ onClick, active, title, children }: {
 export default function RichEditor({ value, onChange }: Props) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // rel/target dibiarkan default TipTap (noopener noreferrer, _blank)
+        link: { openOnClick: false, autolink: true },
+      }),
       Underline,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
@@ -42,7 +45,9 @@ export default function RichEditor({ value, onChange }: Props) {
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class: 'min-h-[200px] px-3 py-2.5 text-[14px] text-ink focus:outline-none prose prose-sm max-w-none',
+        // Pakai .prose-custom yang sama dengan halaman berita publik,
+        // supaya tampilan saat mengetik sama dengan hasil terbitnya.
+        class: 'prose-custom min-h-[200px] px-3 py-2.5 focus:outline-none',
       },
     },
   })
@@ -57,6 +62,19 @@ export default function RichEditor({ value, onChange }: Props) {
   if (!editor) return null
 
   const e = editor
+
+  const aturTautan = () => {
+    const sekarang = e.getAttributes('link').href as string | undefined
+    const url = window.prompt(
+      'Alamat tautan (kosongkan untuk menghapus tautan):',
+      sekarang ?? 'https://',
+    )
+    if (url === null) return // batal
+
+    const rantai = e.chain().focus().extendMarkRange('link')
+    if (url.trim() === '') rantai.unsetLink().run()
+    else rantai.setLink({ href: url.trim() }).run()
+  }
 
   return (
     <div className="border border-border focus-within:border-ink transition-colors">
@@ -92,8 +110,22 @@ export default function RichEditor({ value, onChange }: Props) {
 
         <div className="w-px h-4 bg-border mx-1" />
 
-        <ToolBtn onClick={() => e.chain().focus().toggleBlockquote().run()} active={e.isActive('blockquote')} title="Blockquote">
-          "
+        <ToolBtn onClick={() => e.chain().focus().toggleBlockquote().run()} active={e.isActive('blockquote')} title="Kutipan">
+          &ldquo;
+        </ToolBtn>
+
+        <div className="w-px h-4 bg-border mx-1" />
+
+        <ToolBtn onClick={aturTautan} active={e.isActive('link')} title="Sisipkan tautan">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
+            <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
+          </svg>
+        </ToolBtn>
+        <ToolBtn onClick={() => e.chain().focus().extendMarkRange('link').unsetLink().run()}
+          title="Hapus tautan">
+          <span className="line-through">↗</span>
         </ToolBtn>
 
         <div className="w-px h-4 bg-border mx-1" />

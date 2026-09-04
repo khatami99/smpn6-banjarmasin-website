@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import ScrollToTop from './components/ScrollToTop'
@@ -8,17 +9,28 @@ import Akademik from './pages/Akademik'
 import Kesiswaan from './pages/Kesiswaan'
 import PrestasiPage from './pages/Prestasi'
 import { BeritaList, BeritaDetail } from './pages/Berita'
-import AdminLayout from './pages/admin/AdminLayout'
-import Login from './pages/admin/Login'
-import Dashboard from './pages/admin/Dashboard'
-import AdminStatistik from './pages/admin/AdminStatistik'
-import AdminProfil from './pages/admin/AdminProfil'
-import AdminBerita from './pages/admin/AdminBerita'
-import AdminPengumuman from './pages/admin/AdminPengumuman'
-import AdminEkskul from './pages/admin/AdminEkskul'
-import AdminPrestasi from './pages/admin/AdminPrestasi'
-import AdminGaleri from './pages/admin/AdminGaleri'
 import Galeri from './pages/Galeri'
+
+// Panel admin dimuat terpisah: pengunjung biasa tidak perlu ikut mengunduh
+// Firebase Auth maupun editor teks yang hanya dipakai staf sekolah.
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
+const Login = lazy(() => import('./pages/admin/Login'))
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'))
+const AdminStatistik = lazy(() => import('./pages/admin/AdminStatistik'))
+const AdminProfil = lazy(() => import('./pages/admin/AdminProfil'))
+const AdminBerita = lazy(() => import('./pages/admin/AdminBerita'))
+const AdminPengumuman = lazy(() => import('./pages/admin/AdminPengumuman'))
+const AdminEkskul = lazy(() => import('./pages/admin/AdminEkskul'))
+const AdminPrestasi = lazy(() => import('./pages/admin/AdminPrestasi'))
+const AdminGaleri = lazy(() => import('./pages/admin/AdminGaleri'))
+
+function MemuatPanel() {
+  return (
+    <div className="min-h-screen bg-off-white flex items-center justify-center">
+      <div className="text-ink-4 text-sm">Memuat panel admin…</div>
+    </div>
+  )
+}
 
 export default function App() {
   return (
@@ -37,8 +49,10 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
 
-        <Route path="/admin/login" element={<Login />} />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/admin/login"
+          element={<Suspense fallback={<MemuatPanel />}><Login /></Suspense>} />
+        <Route path="/admin"
+          element={<Suspense fallback={<MemuatPanel />}><AdminLayout /></Suspense>}>
           <Route index element={<Dashboard />} />
           <Route path="statistik" element={<AdminStatistik />} />
           <Route path="profil" element={<AdminProfil />} />

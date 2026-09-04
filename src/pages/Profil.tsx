@@ -45,9 +45,14 @@ export default function Profil() {
                   ['NIP', profile.nip],
                   ['Akreditasi', `${stats.akreditasi} (Unggul)`],
                 ].map(([k, v]) => (
-                  <div key={k} className="grid grid-cols-[200px_1fr] text-sm">
-                    <div className="px-4 py-3 bg-surface text-ink-3 font-medium">{k}</div>
-                    <div className="px-4 py-3 text-ink">{v}</div>
+                  // Di layar HP kolomnya ditumpuk — dua kolom 200px tidak muat
+                  // di lebar 375px dan membuat halaman meluber ke samping.
+                  <div key={k} className="grid grid-cols-1 sm:grid-cols-[180px_1fr] text-sm">
+                    <div className="px-4 pt-3 pb-1 sm:py-3 sm:bg-surface text-ink-3 font-medium
+                      text-[11px] sm:text-sm uppercase sm:normal-case tracking-wide sm:tracking-normal">
+                      {k}
+                    </div>
+                    <div className="px-4 pb-3 pt-0 sm:py-3 text-ink break-words">{v}</div>
                   </div>
                 ))}
               </div>
