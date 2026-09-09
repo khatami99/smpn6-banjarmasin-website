@@ -18,6 +18,7 @@ export default function AdminHalaman() {
   const [editId, setEditId] = useState<string | null>(null)
   const [slugDisentuh, setSlugDisentuh] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [errorSimpan, setErrorSimpan] = useState<string | null>(null)
 
   // Slug halaman lain, untuk mendeteksi tabrakan alamat
   const slugLain = halaman.filter(h => h.id !== editId).map(h => h.slug)
@@ -51,12 +52,19 @@ export default function AdminHalaman() {
     e.preventDefault()
     if (errorSlug) return
     setSaving(true)
+    setErrorSimpan(null)
     try {
       if (mode === 'edit' && editId) await updateHalaman(editId, form)
       else await addHalaman(form)
       setMode('list')
-    } catch { alert('Gagal menyimpan.') }
-    finally { setSaving(false) }
+    } catch (err) {
+      const kode = (err as { code?: string }).code
+      setErrorSimpan(
+        kode === 'permission-denied'
+          ? 'IZIN_BELUM_DIPASANG'
+          : `Gagal menyimpan. (${kode ?? 'kesalahan tidak dikenal'})`,
+      )
+    } finally { setSaving(false) }
   }
 
   const handleDelete = async (id: string, judul: string) => {
@@ -161,6 +169,29 @@ export default function AdminHalaman() {
               <span className="text-[13px] font-medium text-ink">Tampilkan sebagai tab di menu</span>
             </label>
           </div>
+
+          {errorSimpan === 'IZIN_BELUM_DIPASANG' ? (
+            <div className="border border-red-200 bg-red-50 p-4 text-[13px] text-red-800 space-y-2">
+              <p className="font-semibold">Belum bisa menyimpan: izin database belum dipasang.</p>
+              <p className="text-red-700">
+                Koleksi <code className="font-mono">halaman</code> belum didaftarkan pada aturan
+                Firestore, jadi penyimpanan ditolak server. Ini pengaturan satu kali.
+              </p>
+              <ol className="list-decimal pl-5 space-y-1 text-red-700">
+                <li>
+                  Buka{' '}
+                  <a className="underline font-medium" target="_blank" rel="noreferrer"
+                    href="https://console.firebase.google.com/project/smpn6-banjarmasin/firestore/rules">
+                    Firebase Console → Firestore → Rules
+                  </a>
+                </li>
+                <li>Tempelkan blok aturan untuk <code className="font-mono">halaman</code> (lihat README)</li>
+                <li>Klik <strong>Publish</strong>, lalu simpan halaman ini lagi</li>
+              </ol>
+            </div>
+          ) : errorSimpan ? (
+            <div className="border border-red-200 bg-red-50 p-3 text-[13px] text-red-700">{errorSimpan}</div>
+          ) : null}
 
           <div className="flex items-center gap-3">
             <button type="submit" disabled={saving || !!errorSlug} className="btn-black disabled:opacity-50">
