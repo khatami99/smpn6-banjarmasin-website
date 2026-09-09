@@ -214,9 +214,12 @@ export function useAkademik() {
 }
 
 // ─── Halaman kustom ──────────────────────────────────────────
+const MAKS_PERCOBAAN = 5
+
 export function useHalaman(publishedOnly = true) {
   const [halaman, setHalaman] = useState<HalamanKustom[]>([])
   const [loading, setLoading] = useState(true)
+  const [gagalMuat, setGagalMuat] = useState(false)
 
   useEffect(() => {
     const col = collection(db, 'halaman')
@@ -225,23 +228,43 @@ export function useHalaman(publishedOnly = true) {
     // di sisi klien saja.
     const q = publishedOnly ? query(col, where('published', '==', true)) : query(col)
 
-    const unsub = onSnapshot(q, (snap) => {
-      const rows = snap.docs.map(d => ({ id: d.id, ...d.data() } as HalamanKustom))
-      rows.sort((a, b) => (a.urutan ?? 0) - (b.urutan ?? 0) || a.judul.localeCompare(b.judul))
-      setHalaman(rows)
-      setLoading(false)
-    }, (err) => {
-      if ((err as { code?: string }).code === 'permission-denied') {
-        console.error(
-          '[halaman] Firestore menolak akses. Tambahkan aturan untuk koleksi "halaman" ' +
-          'di Firebase Console > Firestore > Rules. Lihat README bagian "Aturan Firestore".',
-        )
-      } else {
-        console.error('[halaman]', err)
-      }
-      setLoading(false)
-    })
-    return unsub
+    let lepas = () => {}
+    let timer = 0
+    let percobaan = 0
+    let dibatalkan = false
+
+    // onSnapshot berhenti permanen begitu sekali gagal — termasuk saat aturan
+    // Firestore baru dipasang di tengah sesi. Tanpa pemasangan ulang, layar
+    // tidak akan pernah menerima data baru sampai halaman di-refresh manual.
+    const berlangganan = () => {
+      lepas = onSnapshot(q, (snap) => {
+        percobaan = 0
+        const rows = snap.docs.map(d => ({ id: d.id, ...d.data() } as HalamanKustom))
+        rows.sort((a, b) => (a.urutan ?? 0) - (b.urutan ?? 0) || a.judul.localeCompare(b.judul))
+        setHalaman(rows)
+        setGagalMuat(false)
+        setLoading(false)
+      }, (err) => {
+        if ((err as { code?: string }).code === 'permission-denied') {
+          console.error(
+            '[halaman] Firestore menolak akses. Tambahkan aturan untuk koleksi "halaman" ' +
+            'di Firebase Console > Firestore > Rules. Lihat README bagian "Aturan Firestore".',
+          )
+        } else {
+          console.error('[halaman]', err)
+        }
+        setLoading(false)
+        setGagalMuat(true)
+
+        if (dibatalkan || percobaan >= MAKS_PERCOBAAN) return
+        const jeda = Math.min(1000 * 2 ** percobaan, 15000)
+        percobaan += 1
+        timer = window.setTimeout(berlangganan, jeda)
+      })
+    }
+
+    berlangganan()
+    return () => { dibatalkan = true; window.clearTimeout(timer); lepas() }
   }, [publishedOnly])
 
   const addHalaman = async (data: Omit<HalamanKustom, 'id'>) => {
@@ -256,5 +279,5 @@ export function useHalaman(publishedOnly = true) {
     await deleteDoc(doc(db, 'halaman', id))
   }
 
-  return { halaman, loading, addHalaman, updateHalaman, deleteHalaman }
+  return { halaman, loading, gagalMuat, addHalaman, updateHalaman, deleteHalaman }
 }

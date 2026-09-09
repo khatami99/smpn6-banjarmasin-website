@@ -12,7 +12,7 @@ const EMPTY: Omit<HalamanKustom, 'id'> = {
 const INPUT = 'w-full border border-border px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:border-ink'
 
 export default function AdminHalaman() {
-  const { halaman, loading, addHalaman, updateHalaman, deleteHalaman } = useHalaman(false)
+  const { halaman, loading, gagalMuat, addHalaman, updateHalaman, deleteHalaman } = useHalaman(false)
   const [mode, setMode] = useState<'list' | 'add' | 'edit'>('list')
   const [form, setForm] = useState<Omit<HalamanKustom, 'id'>>(EMPTY)
   const [editId, setEditId] = useState<string | null>(null)
@@ -216,6 +216,19 @@ export default function AdminHalaman() {
         </div>
         <button onClick={openAdd} className="btn-black flex-shrink-0">+ Buat Halaman</button>
       </div>
+
+      {gagalMuat && (
+        <div className="border border-amber-300 bg-amber-50 p-4 mb-5 text-[13px] text-amber-900 flex items-start justify-between gap-4">
+          <span>
+            <strong>Daftar halaman gagal dimuat dari server.</strong>{' '}
+            Sedang dicoba menyambung ulang otomatis — daftar di bawah mungkin belum terbaru.
+          </span>
+          <button onClick={() => window.location.reload()}
+            className="flex-shrink-0 px-3 py-1 border border-amber-400 hover:bg-amber-100 transition-colors">
+            Muat ulang
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-3">
