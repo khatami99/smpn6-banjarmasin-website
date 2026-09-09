@@ -148,9 +148,20 @@ export default function AdminEkskul() {
           {ekskul.map(e => (
             <div key={e.id}
               className={`border p-4 flex gap-3 ${e.aktif ? 'border-border' : 'border-border opacity-50'}`}>
-              {e.foto
-                ? <SafeImage src={e.foto} alt={e.nama} className="w-11 h-11 object-cover flex-shrink-0" />
-                : <span className="text-2xl flex-shrink-0 w-11 h-11 flex items-center justify-center">{e.emoji}</span>}
+              {/* Emoji tetap tampil walau sudah ada foto */}
+              <div className="relative w-11 h-11 flex-shrink-0">
+                {e.foto ? (
+                  <>
+                    <SafeImage src={e.foto} alt={e.nama} className="w-full h-full object-cover" />
+                    <span className="absolute -right-1 -bottom-1 w-5 h-5 bg-white border border-border
+                                     flex items-center justify-center text-[11px] leading-none">
+                      {e.emoji}
+                    </span>
+                  </>
+                ) : (
+                  <span className="w-full h-full flex items-center justify-center text-2xl">{e.emoji}</span>
+                )}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-semibold text-ink">{e.nama}</span>

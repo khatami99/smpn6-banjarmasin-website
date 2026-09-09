@@ -87,13 +87,27 @@ export default function Kesiswaan() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {aktif.map((e: Ekskul) => (
                 <div key={e.id}
-                  className="border border-border hover:border-ink transition-colors group overflow-hidden">
-                  {e.foto && (
-                    <SafeImage src={e.foto} alt={e.nama} className="w-full aspect-[4/3] object-cover" />
-                  )}
-                  <div className="p-5">
-                  {/* Emoji hanya dipakai saat belum ada foto, agar tidak mubazir */}
-                  {!e.foto && <span className="text-3xl mb-4 block">{e.emoji}</span>}
+                  className="border border-border hover:border-ink transition-colors group overflow-hidden flex flex-col">
+                  {/* Area gambar selalu ada agar tinggi semua kartu seragam.
+                      Emoji tetap tampil: besar saat belum ada foto, jadi
+                      lencana kecil di sudut foto saat sudah ada. */}
+                  <div className="relative aspect-[4/3] bg-surface overflow-hidden flex-shrink-0">
+                    {e.foto ? (
+                      <>
+                        <SafeImage src={e.foto} alt={e.nama} className="w-full h-full object-cover" />
+                        <span className="absolute left-3 bottom-3 w-9 h-9 bg-white border border-border
+                                         flex items-center justify-center text-lg shadow-sm">
+                          {e.emoji}
+                        </span>
+                      </>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-5xl">
+                        {e.emoji}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5 flex-1">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="text-[14px] font-semibold text-ink">{e.nama}</div>
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 flex-shrink-0
