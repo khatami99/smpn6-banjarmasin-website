@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import ImageUrlField from '../../components/ImageUrlField'
 import SafeImage from '../../components/SafeImage'
 import { useGaleri } from '../../hooks/useFirestore'
+import { kapitalJudul } from '../../lib/teks'
 import type { GaleriItem } from '../../types'
 
 const EMPTY: Omit<GaleriItem, 'id'> = {
@@ -64,7 +65,8 @@ export default function AdminGaleri() {
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
               Judul Foto
             </label>
-            <input className={INPUT} value={form.judul} onChange={set('judul')} required
+            <input className={INPUT} value={form.judul} onChange={set('judul')} required autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, judul: kapitalJudul(p.judul) }))}
               placeholder="Contoh: Upacara Hari Kemerdekaan 2026" />
           </div>
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { useProfile } from '../../hooks/useFirestore'
+import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { SchoolProfile } from '../../types'
 
 function Field({ label, desc, children }: { label: string; desc?: string; children: React.ReactNode }) {
@@ -38,6 +39,18 @@ export default function AdminProfil() {
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
   }, [dirty])
+
+  // Rapikan huruf besar saat kursor meninggalkan kolom nama/judul
+  const rapikan = (key: keyof SchoolProfile, fn: (t: string) => string) => () => {
+    setForm(prev => {
+      const lama = String(prev[key] ?? '')
+      const baru = fn(lama)
+      if (baru === lama) return prev
+      // Tandai belum tersimpan, kalau tidak snapshot realtime bisa menimpanya
+      setDirty(true)
+      return { ...prev, [key]: baru }
+    })
+  }
 
   const set = (key: keyof SchoolProfile) => (
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -79,21 +92,25 @@ export default function AdminProfil() {
             Identitas Sekolah
           </div>
           <Field label="Nama Sekolah">
-            <input className={INPUT} value={form.nama} onChange={set('nama')} />
+            <input className={INPUT} value={form.nama} onChange={set('nama')} autoCapitalize="words"
+              onBlur={rapikan('nama', kapitalJudul)} />
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="NPSN">
               <input className={INPUT} value={form.npsn} onChange={set('npsn')} />
             </Field>
             <Field label="Status">
-              <input className={INPUT} value={form.statusSekolah} onChange={set('statusSekolah')} />
+              <input className={INPUT} value={form.statusSekolah} onChange={set('statusSekolah')} autoCapitalize="words"
+              onBlur={rapikan('statusSekolah', kapitalJudul)} />
             </Field>
           </div>
           <Field label="Bentuk Pendidikan" desc="Contoh: SMP">
-            <input className={INPUT} value={form.bentukPendidikan} onChange={set('bentukPendidikan')} />
+            <input className={INPUT} value={form.bentukPendidikan} onChange={set('bentukPendidikan')} autoCapitalize="words"
+              onBlur={rapikan('bentukPendidikan', kapitalJudul)} />
           </Field>
           <Field label="Kepala Sekolah">
-            <input className={INPUT} value={form.kepalaSekolah} onChange={set('kepalaSekolah')} />
+            <input className={INPUT} value={form.kepalaSekolah} onChange={set('kepalaSekolah')} autoCapitalize="words"
+              onBlur={rapikan('kepalaSekolah', kapitalNama)} />
           </Field>
           <Field label="NIP Kepala Sekolah">
             <input className={INPUT} value={form.nip} onChange={set('nip')} />
@@ -110,22 +127,26 @@ export default function AdminProfil() {
           </Field>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Kelurahan">
-              <input className={INPUT} value={form.kelurahan} onChange={set('kelurahan')} />
+              <input className={INPUT} value={form.kelurahan} onChange={set('kelurahan')} autoCapitalize="words"
+              onBlur={rapikan('kelurahan', kapitalNama)} />
             </Field>
             <Field label="Kecamatan">
-              <input className={INPUT} value={form.kecamatan} onChange={set('kecamatan')} />
+              <input className={INPUT} value={form.kecamatan} onChange={set('kecamatan')} autoCapitalize="words"
+              onBlur={rapikan('kecamatan', kapitalNama)} />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Kota">
-              <input className={INPUT} value={form.kota} onChange={set('kota')} />
+              <input className={INPUT} value={form.kota} onChange={set('kota')} autoCapitalize="words"
+              onBlur={rapikan('kota', kapitalNama)} />
             </Field>
             <Field label="Kode Pos">
               <input className={INPUT} value={form.kodePos} onChange={set('kodePos')} />
             </Field>
           </div>
           <Field label="Provinsi">
-            <input className={INPUT} value={form.provinsi} onChange={set('provinsi')} />
+            <input className={INPUT} value={form.provinsi} onChange={set('provinsi')} autoCapitalize="words"
+              onBlur={rapikan('provinsi', kapitalNama)} />
           </Field>
           <Field label="Telepon">
             <input className={INPUT} value={form.telepon} onChange={set('telepon')} />

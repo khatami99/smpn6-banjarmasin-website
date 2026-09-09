@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import RichEditor from '../../components/RichEditor'
 import { useHalaman } from '../../hooks/useFirestore'
 import { buatSlug, cekSlug } from '../../lib/slug'
+import { kapitalJudul } from '../../lib/teks'
 import type { HalamanKustom } from '../../types'
 
 const EMPTY: Omit<HalamanKustom, 'id'> = {
@@ -100,7 +101,8 @@ export default function AdminHalaman() {
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
               Judul Halaman
             </label>
-            <input className={INPUT} value={form.judul} onChange={setJudul} required
+            <input className={INPUT} value={form.judul} onChange={setJudul} required autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, judul: kapitalJudul(p.judul) }))}
               placeholder="Contoh: Fasilitas Sekolah" />
             <p className="text-[11px] text-ink-4 mt-1">Teks ini yang tampil di menu navigasi.</p>
           </div>
@@ -128,7 +130,8 @@ export default function AdminHalaman() {
               <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
                 Label Kecil <span className="font-normal text-ink-4 normal-case tracking-normal">(opsional)</span>
               </label>
-              <input className={INPUT} value={form.eyebrow ?? ''} onChange={set('eyebrow')}
+              <input className={INPUT} value={form.eyebrow ?? ''} onChange={set('eyebrow')} autoCapitalize="words"
+                onBlur={() => setForm(p => ({ ...p, eyebrow: kapitalJudul(p.eyebrow ?? '') }))}
                 placeholder="Contoh: Sarana & Prasarana" />
             </div>
             <div>

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import RichEditor from '../../components/RichEditor'
 import ImageUrlField from '../../components/ImageUrlField'
 import { useNews } from '../../hooks/useFirestore'
+import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { NewsItem } from '../../types'
 
 const EMPTY: Omit<NewsItem, 'id'> = {
@@ -77,7 +78,8 @@ export default function AdminBerita() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Judul</label>
-            <input className={INPUT} value={form.judul} onChange={set('judul')} required />
+            <input className={INPUT} value={form.judul} onChange={set('judul')} required autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, judul: kapitalJudul(p.judul) }))} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -96,7 +98,8 @@ export default function AdminBerita() {
 
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Penulis</label>
-            <input className={INPUT} value={form.penulis} onChange={set('penulis')} placeholder="Tim Humas" />
+            <input className={INPUT} value={form.penulis} onChange={set('penulis')} placeholder="Tim Humas" autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, penulis: kapitalNama(p.penulis) }))} />
           </div>
 
           <ImageUrlField

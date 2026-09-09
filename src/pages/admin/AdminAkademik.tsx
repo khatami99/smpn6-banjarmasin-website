@@ -1,5 +1,6 @@
 import { useState, useEffect, type FormEvent, type ReactNode } from 'react'
 import { useAkademik } from '../../hooks/useFirestore'
+import { kapitalJudul } from '../../lib/teks'
 import type { AkademikData } from '../../types'
 
 // Sengaja tanpa lebar: kalau kelas dasar memuat w-full, penimpaan seperti
@@ -110,9 +111,13 @@ export default function AdminAkademik() {
           <div className="space-y-2">
             {form.mapel.map((m, i) => (
               <div key={i} className="flex gap-2">
-                <input className={FIELD_ISI} value={m.nama} placeholder="Nama mata pelajaran"
+                <input className={FIELD_ISI} value={m.nama} autoCapitalize="words" placeholder="Nama mata pelajaran"
                   onChange={e => {
                     const baru = [...form.mapel]; baru[i] = { ...baru[i], nama: e.target.value }
+                    ubah('mapel', baru)
+                  }}
+                  onBlur={() => {
+                    const baru = [...form.mapel]; baru[i] = { ...baru[i], nama: kapitalJudul(baru[i].nama) }
                     ubah('mapel', baru)
                   }} />
                 <input type="number" min={0} className={`${FIELD} w-20 flex-shrink-0`} value={m.jam}
@@ -136,8 +141,9 @@ export default function AdminAkademik() {
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
               Judul Kalender
             </label>
-            <input className={INPUT} value={form.judulKalender}
+            <input className={INPUT} value={form.judulKalender} autoCapitalize="words"
               onChange={e => ubah('judulKalender', e.target.value)}
+              onBlur={() => ubah('judulKalender', kapitalJudul(form.judulKalender))}
               placeholder="Kalender Akademik 2026/2027" />
           </div>
 
@@ -177,9 +183,13 @@ export default function AdminAkademik() {
           <div className="space-y-2">
             {form.info.map((it, i) => (
               <div key={i} className="flex gap-2">
-                <input className={`${FIELD} w-40 flex-shrink-0`} value={it.label} placeholder="Kurikulum"
+                <input className={`${FIELD} w-40 flex-shrink-0`} value={it.label} autoCapitalize="words" placeholder="Kurikulum"
                   onChange={e => {
                     const baru = [...form.info]; baru[i] = { ...baru[i], label: e.target.value }
+                    ubah('info', baru)
+                  }}
+                  onBlur={() => {
+                    const baru = [...form.info]; baru[i] = { ...baru[i], label: kapitalJudul(baru[i].label) }
                     ubah('info', baru)
                   }} />
                 <input className={FIELD_ISI} value={it.nilai} placeholder="Kurikulum Merdeka"
@@ -202,9 +212,13 @@ export default function AdminAkademik() {
           <div className="space-y-2">
             {form.programUnggulan.map((p, i) => (
               <div key={i} className="flex gap-2">
-                <input className={FIELD_ISI} value={p} placeholder="Nama program"
+                <input className={FIELD_ISI} value={p} autoCapitalize="words" placeholder="Nama program"
                   onChange={e => {
                     const baru = [...form.programUnggulan]; baru[i] = e.target.value
+                    ubah('programUnggulan', baru)
+                  }}
+                  onBlur={() => {
+                    const baru = [...form.programUnggulan]; baru[i] = kapitalJudul(baru[i])
                     ubah('programUnggulan', baru)
                   }} />
                 <BarisAksi onHapus={() => ubah('programUnggulan', form.programUnggulan.filter((_, x) => x !== i))} />

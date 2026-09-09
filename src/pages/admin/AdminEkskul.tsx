@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useEkskul } from '../../hooks/useFirestore'
+import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { Ekskul } from '../../types'
 
 const EMPTY: Omit<Ekskul, 'id'> = {
@@ -66,7 +67,8 @@ export default function AdminEkskul() {
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Nama Ekskul</label>
-              <input className={INPUT} value={form.nama} onChange={set('nama')} required />
+              <input className={INPUT} value={form.nama} onChange={set('nama')} required autoCapitalize="words"
+                onBlur={() => setForm(p => ({ ...p, nama: kapitalJudul(p.nama) }))} />
             </div>
           </div>
           <div>
@@ -87,7 +89,8 @@ export default function AdminEkskul() {
           </div>
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Nama Pembina</label>
-            <input className={INPUT} value={form.pembina} onChange={set('pembina')} />
+            <input className={INPUT} value={form.pembina} onChange={set('pembina')} autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, pembina: kapitalNama(p.pembina) }))} />
           </div>
           <label className="flex items-center gap-2 cursor-pointer pt-1">
             <input type="checkbox" checked={form.aktif}

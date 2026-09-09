@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import ImageUrlField from '../../components/ImageUrlField'
 import { usePrestasi } from '../../hooks/useFirestore'
+import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { Prestasi } from '../../types'
 
 const EMPTY: Omit<Prestasi, 'id'> = {
@@ -67,7 +68,8 @@ export default function AdminPrestasi() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Nama Prestasi / Penghargaan</label>
-            <input className={INPUT} value={form.judul} onChange={set('judul')} required
+            <input className={INPUT} value={form.judul} onChange={set('judul')} required autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, judul: kapitalJudul(p.judul) }))}
               placeholder="Contoh: Juara 1 OSN Matematika" />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -86,12 +88,14 @@ export default function AdminPrestasi() {
           </div>
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Peringkat / Kategori</label>
-            <input className={INPUT} value={form.peringkat} onChange={set('peringkat')}
+            <input className={INPUT} value={form.peringkat} onChange={set('peringkat')} autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, peringkat: kapitalJudul(p.peringkat) }))}
               placeholder="Contoh: Juara 1 / Medali Emas / Finalis" />
           </div>
           <div>
             <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Nama Pemenang / Tim</label>
-            <input className={INPUT} value={form.pemenang} onChange={set('pemenang')} required />
+            <input className={INPUT} value={form.pemenang} onChange={set('pemenang')} required autoCapitalize="words"
+              onBlur={() => setForm(p => ({ ...p, pemenang: kapitalNama(p.pemenang) }))} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
