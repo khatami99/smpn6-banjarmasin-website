@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { useGaleri } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 import SafeImage from '../components/SafeImage'
+import Paginasi from '../components/Paginasi'
+import { usePaginasi } from '../hooks/usePaginasi'
+
+const FOTO_PER_HALAMAN = 24
 
 export default function Galeri() {
   const { galeri, loading } = useGaleri()
@@ -11,6 +15,8 @@ export default function Galeri() {
     'Galeri Foto',
     'Dokumentasi kegiatan, upacara, dan momen kebersamaan di SMPN 6 Banjarmasin.',
   )
+
+  const pg = usePaginasi(galeri, FOTO_PER_HALAMAN)
 
   const selected = index === null ? null : galeri[index]
 
@@ -45,7 +51,7 @@ export default function Galeri() {
   }, [index])
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-14">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 py-14" ref={pg.anchor}>
       <div className="eyebrow">Galeri Foto</div>
       <h1 className="section-title mb-10">Dokumentasi Kegiatan</h1>
 
@@ -61,10 +67,10 @@ export default function Galeri() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {galeri.map((item, i) => (
+          {pg.tampil.map(item => (
             <button
               key={item.id}
-              onClick={() => setIndex(i)}
+              onClick={() => setIndex(galeri.findIndex(g => g.id === item.id))}
               aria-label={`Lihat foto: ${item.judul}`}
               className="group relative aspect-square overflow-hidden bg-surface focus:outline-none focus:ring-2 focus:ring-ink"
             >
@@ -82,6 +88,14 @@ export default function Galeri() {
           ))}
         </div>
       )}
+
+      <Paginasi
+        halaman={pg.halaman}
+        totalHalaman={pg.totalHalaman}
+        onGanti={pg.gantiHalaman}
+        totalItem={pg.total}
+        onTampilkanSemua={pg.tampilkanSemua}
+      />
 
       {/* Lightbox */}
       {selected && (

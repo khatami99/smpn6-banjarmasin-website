@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import ImageUrlField from '../../components/ImageUrlField'
 import SafeImage from '../../components/SafeImage'
+import Paginasi from '../../components/Paginasi'
+import { usePaginasi } from '../../hooks/usePaginasi'
 import { useGaleri } from '../../hooks/useFirestore'
 import { kapitalJudul } from '../../lib/teks'
 import type { GaleriItem } from '../../types'
@@ -8,6 +10,8 @@ import type { GaleriItem } from '../../types'
 const EMPTY: Omit<GaleriItem, 'id'> = {
   judul: '', url: '', deskripsi: '', tanggal: new Date().toISOString().split('T')[0],
 }
+
+const FOTO_PER_HALAMAN = 24
 
 const INPUT = "w-full border border-border px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:border-ink"
 
@@ -18,6 +22,7 @@ export default function AdminGaleri() {
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [urlValid, setUrlValid] = useState(false)
+  const pg = usePaginasi(galeri, FOTO_PER_HALAMAN)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -108,7 +113,7 @@ export default function AdminGaleri() {
   }
 
   return (
-    <div className="p-6 md:p-10">
+    <div className="p-6 md:p-10" ref={pg.anchor}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl text-ink">Kelola Galeri</h1>
@@ -128,7 +133,7 @@ export default function AdminGaleri() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {galeri.map(item => (
+          {pg.tampil.map(item => (
             <div key={item.id} className="group relative aspect-square overflow-hidden bg-surface border border-border">
               <SafeImage src={item.url} alt={item.judul} className="w-full h-full object-cover"
                 fallbackLabel="URL foto rusak" />
@@ -149,6 +154,14 @@ export default function AdminGaleri() {
           ))}
         </div>
       )}
+
+      <Paginasi
+        halaman={pg.halaman}
+        totalHalaman={pg.totalHalaman}
+        onGanti={pg.gantiHalaman}
+        totalItem={pg.total}
+        onTampilkanSemua={pg.tampilkanSemua}
+      />
     </div>
   )
 }

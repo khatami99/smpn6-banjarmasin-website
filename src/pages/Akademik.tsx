@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import Paginasi from '../components/Paginasi'
+import { usePaginasi } from '../hooks/usePaginasi'
 import { useAkademik } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 
@@ -9,32 +9,13 @@ const AGENDA_PER_HALAMAN = 12
 
 export default function Akademik() {
   const { akademik, loading } = useAkademik()
-  const [halaman, setHalaman] = useState(1)
-  const [tampilSemua, setTampilSemua] = useState(false)
-  const kepalaKalender = useRef<HTMLDivElement>(null)
 
   usePageMeta(
     'Akademik',
     'Kurikulum Merdeka, struktur mata pelajaran, dan kalender akademik SMPN 6 Banjarmasin.',
   )
 
-  const totalAgenda = akademik.kalender.length
-  const berpaginasi = !tampilSemua && totalAgenda > AGENDA_PER_HALAMAN
-  const totalHalaman = berpaginasi ? Math.ceil(totalAgenda / AGENDA_PER_HALAMAN) : 1
-
-  // Jaga agar halaman aktif tidak melewati batas saat admin menghapus agenda
-  useEffect(() => {
-    setHalaman(h => Math.min(h, Math.max(1, totalHalaman)))
-  }, [totalHalaman])
-
-  const agendaTampil = berpaginasi
-    ? akademik.kalender.slice((halaman - 1) * AGENDA_PER_HALAMAN, halaman * AGENDA_PER_HALAMAN)
-    : akademik.kalender
-
-  const gantiHalaman = (n: number) => {
-    setHalaman(n)
-    kepalaKalender.current?.scrollIntoView({ block: 'start', behavior: 'instant' })
-  }
+  const pg = usePaginasi(akademik.kalender, AGENDA_PER_HALAMAN)
 
   return (
     <>
@@ -88,7 +69,7 @@ export default function Akademik() {
           </section>
 
           {/* Kalender */}
-          <section id="kalender" ref={kepalaKalender} className="scroll-mt-24">
+          <section id="kalender" ref={pg.anchor} className="scroll-mt-24">
             <div className="eyebrow mb-2">Jadwal Kegiatan</div>
             <h2 className="font-serif text-2xl text-ink mb-6">{akademik.judulKalender}</h2>
             {loading ? (
@@ -97,7 +78,7 @@ export default function Akademik() {
               <p className="text-ink-4 text-sm border border-border p-6">Kalender akademik belum diisi.</p>
             ) : (
               <div className="border border-border divide-y divide-border">
-                {agendaTampil.map((k, i) => (
+                {pg.tampil.map((k, i) => (
                   // Di layar kecil ditumpuk agar kolom bulan tidak menggencet teks
                   <div key={i} className="grid grid-cols-1 sm:grid-cols-[100px_1fr] text-[14px] hover:bg-off-white transition-colors">
                     <div className="px-4 pt-3 pb-1 sm:py-3.5 font-semibold text-ink sm:bg-surface sm:border-r border-border
@@ -111,11 +92,11 @@ export default function Akademik() {
             )}
 
             <Paginasi
-              halaman={halaman}
-              totalHalaman={totalHalaman}
-              onGanti={gantiHalaman}
-              totalItem={totalAgenda}
-              onTampilkanSemua={() => { setTampilSemua(true); setHalaman(1) }}
+              halaman={pg.halaman}
+              totalHalaman={pg.totalHalaman}
+              onGanti={pg.gantiHalaman}
+              totalItem={pg.total}
+              onTampilkanSemua={pg.tampilkanSemua}
             />
           </section>
 

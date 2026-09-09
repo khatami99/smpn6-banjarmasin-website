@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useNews } from '../hooks/useFirestore'
+import { usePaginasi } from '../hooks/usePaginasi'
+import Paginasi from '../components/Paginasi'
 import { usePageMeta } from '../hooks/usePageMeta'
 import SafeImage from '../components/SafeImage'
 import type { NewsItem } from '../types'
+
+const BERITA_PER_HALAMAN = 10
 
 const KATEGORI_COLOR: Record<string, string> = {
   Kegiatan: 'bg-blue-50 text-blue-700',
@@ -46,6 +50,8 @@ export function BeritaList() {
   const allKat = ['Semua', 'Kegiatan', 'Prestasi', 'Akademik', 'PPDB', 'Pengumuman']
   const filtered = kategori === 'Semua' ? news : news.filter(n => n.kategori === kategori)
 
+  const pg = usePaginasi(filtered, BERITA_PER_HALAMAN)
+
   return (
     <>
       <div className="bg-ink px-6 md:px-12 py-14 border-b border-white/10">
@@ -62,7 +68,7 @@ export function BeritaList() {
       <div className="border-b border-border bg-off-white px-6 md:px-12 py-4">
         <div className="max-w-7xl mx-auto flex flex-wrap gap-2">
           {allKat.map(k => (
-            <button key={k} onClick={() => setKategori(k)}
+            <button key={k} onClick={() => { setKategori(k); pg.kembaliKeAwal() }}
               className={`px-3 py-1 text-[12px] font-medium border transition-colors
                 ${kategori === k ? 'bg-ink text-white border-ink' : 'bg-white text-ink-3 border-border hover:border-ink'}`}>
               {k}
@@ -71,7 +77,7 @@ export function BeritaList() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12" ref={pg.anchor}>
         {loading ? (
           <div className="space-y-5">
             {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-24 bg-surface animate-pulse" />)}
@@ -80,7 +86,7 @@ export function BeritaList() {
           <p className="text-ink-4 text-center py-16">Belum ada berita dalam kategori ini.</p>
         ) : (
           <div className="divide-y divide-border border-t border-border">
-            {filtered.map((item: NewsItem) => {
+            {pg.tampil.map((item: NewsItem) => {
               const { day, month, year } = formatDate(item.tanggal)
               return (
                 <Link key={item.id} to={`/berita/${item.id}`}
@@ -115,6 +121,14 @@ export function BeritaList() {
             })}
           </div>
         )}
+
+        <Paginasi
+          halaman={pg.halaman}
+          totalHalaman={pg.totalHalaman}
+          onGanti={pg.gantiHalaman}
+          totalItem={pg.total}
+          onTampilkanSemua={pg.tampilkanSemua}
+        />
       </div>
     </>
   )

@@ -2,7 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { usePrestasi } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 import SafeImage from '../components/SafeImage'
+import Paginasi from '../components/Paginasi'
+import { usePaginasi } from '../hooks/usePaginasi'
 import type { Prestasi } from '../types'
+
+const PRESTASI_PER_HALAMAN = 12
 
 const TINGKAT_ORDER = ['Internasional', 'Nasional', 'Provinsi', 'Kota', 'Sekolah']
 
@@ -34,8 +38,10 @@ export default function PrestasiPage() {
     return okTingkat && okTahun
   })
 
-  // Group by year
-  const byYear = filtered.reduce((acc, p) => {
+  // Potong dulu, baru dikelompokkan, supaya judul tahun ikut per halaman
+  const pg = usePaginasi(filtered, PRESTASI_PER_HALAMAN)
+
+  const byYear = pg.tampil.reduce((acc, p) => {
     const y = String(p.tahun)
     if (!acc[y]) acc[y] = []
     acc[y].push(p)
@@ -44,8 +50,8 @@ export default function PrestasiPage() {
 
   const years = Object.keys(byYear).sort((a, b) => +b - +a)
 
-  // Urutan datar mengikuti tampilan, dipakai tombol maju-mundur di panel detail
-  const urut = years.flatMap(y => byYear[y])
+  // Panel detail menelusuri seluruh hasil filter, bukan hanya halaman aktif
+  const urut = filtered
   const terpilih = indeks === null ? null : urut[indeks]
 
   const tutup = useCallback(() => setIndeks(null), [])
@@ -76,7 +82,7 @@ export default function PrestasiPage() {
     return () => { document.body.style.overflow = sebelumnya }
   }, [indeks])
 
-  const gantiFilter = (fn: () => void) => { fn(); setIndeks(null) }
+  const gantiFilter = (fn: () => void) => { fn(); setIndeks(null); pg.kembaliKeAwal() }
 
   return (
     <>
@@ -112,7 +118,7 @@ export default function PrestasiPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12" ref={pg.anchor}>
         {loading ? (
           <div className="space-y-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -174,6 +180,14 @@ export default function PrestasiPage() {
             ))}
           </div>
         )}
+
+        <Paginasi
+          halaman={pg.halaman}
+          totalHalaman={pg.totalHalaman}
+          onGanti={pg.gantiHalaman}
+          totalItem={pg.total}
+          onTampilkanSemua={pg.tampilkanSemua}
+        />
       </div>
 
       {/* Panel detail */}

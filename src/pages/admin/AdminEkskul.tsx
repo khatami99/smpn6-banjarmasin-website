@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import EmojiPicker from '../../components/EmojiPicker'
 import ImageUrlField from '../../components/ImageUrlField'
+import Paginasi from '../../components/Paginasi'
+import { usePaginasi } from '../../hooks/usePaginasi'
 import { useEkskul } from '../../hooks/useFirestore'
 import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { Ekskul } from '../../types'
@@ -9,6 +11,8 @@ const EMPTY: Omit<Ekskul, 'id'> = {
   nama: '', deskripsi: '', jadwal: '', pembina: '', emoji: '⭐', foto: '',
   kategori: 'Lainnya', aktif: true,
 }
+
+const EKSKUL_PER_HALAMAN = 20
 
 const KAT_LIST = ['Olahraga', 'Seni', 'Akademik', 'Pramuka', 'Lainnya'] as const
 const INPUT = "w-full border border-border px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:border-ink"
@@ -20,6 +24,7 @@ export default function AdminEkskul() {
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [fotoValid, setFotoValid] = useState(true)
+  const pg = usePaginasi(ekskul, EKSKUL_PER_HALAMAN)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -124,7 +129,7 @@ export default function AdminEkskul() {
   }
 
   return (
-    <div className="p-6 md:p-10">
+    <div className="p-6 md:p-10" ref={pg.anchor}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl text-ink">Kelola Ekskul</h1>
@@ -144,7 +149,7 @@ export default function AdminEkskul() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-3">
-          {ekskul.map(e => (
+          {pg.tampil.map(e => (
             <div key={e.id}
               className={`border p-4 flex gap-3 ${e.aktif ? 'border-border' : 'border-border opacity-50'}`}>
               {/* Daftar admin sengaja memakai emoji saja — thumbnail foto
@@ -178,6 +183,14 @@ export default function AdminEkskul() {
           ))}
         </div>
       )}
+
+      <Paginasi
+        halaman={pg.halaman}
+        totalHalaman={pg.totalHalaman}
+        onGanti={pg.gantiHalaman}
+        totalItem={pg.total}
+        onTampilkanSemua={pg.tampilkanSemua}
+      />
     </div>
   )
 }

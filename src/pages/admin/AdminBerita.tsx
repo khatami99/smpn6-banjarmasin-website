@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import RichEditor from '../../components/RichEditor'
 import ImageUrlField from '../../components/ImageUrlField'
+import Paginasi from '../../components/Paginasi'
+import { usePaginasi } from '../../hooks/usePaginasi'
 import { useNews } from '../../hooks/useFirestore'
 import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { NewsItem } from '../../types'
@@ -9,6 +11,8 @@ const EMPTY: Omit<NewsItem, 'id'> = {
   judul: '', isi: '', ringkasan: '', kategori: 'Kegiatan',
   tanggal: new Date().toISOString().split('T')[0], penulis: '', published: false, foto: '',
 }
+
+const BERITA_PER_HALAMAN = 15
 
 const KATEGORI_LIST = ['Kegiatan', 'Prestasi', 'Akademik', 'PPDB', 'Pengumuman'] as const
 const INPUT = "w-full border border-border px-3 py-2.5 text-[14px] text-ink focus:outline-none focus:border-ink"
@@ -30,6 +34,7 @@ export default function AdminBerita() {
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [fotoValid, setFotoValid] = useState(true)
+  const pg = usePaginasi(news, BERITA_PER_HALAMAN)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
@@ -151,7 +156,7 @@ export default function AdminBerita() {
   }
 
   return (
-    <div className="p-6 md:p-10">
+    <div className="p-6 md:p-10" ref={pg.anchor}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-serif text-2xl text-ink">Kelola Berita</h1>
@@ -171,7 +176,7 @@ export default function AdminBerita() {
         </div>
       ) : (
         <div className="border border-border divide-y divide-border">
-          {news.map(n => (
+          {pg.tampil.map(n => (
             <div key={n.id} className="flex items-start gap-4 p-4 hover:bg-off-white transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -204,6 +209,14 @@ export default function AdminBerita() {
           ))}
         </div>
       )}
+
+      <Paginasi
+        halaman={pg.halaman}
+        totalHalaman={pg.totalHalaman}
+        onGanti={pg.gantiHalaman}
+        totalItem={pg.total}
+        onTampilkanSemua={pg.tampilkanSemua}
+      />
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { useEkskul } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 import SafeImage from '../components/SafeImage'
+import Paginasi from '../components/Paginasi'
+import { usePaginasi } from '../hooks/usePaginasi'
 import type { Ekskul } from '../types'
 
 const KAT_COLORS: Record<string, string> = {
@@ -11,6 +13,8 @@ const KAT_COLORS: Record<string, string> = {
   Pramuka: 'bg-green/10 text-green',
   Lainnya: 'bg-surface text-ink-3',
 }
+
+const EKSKUL_PER_HALAMAN = 16
 
 const URUTAN_KAT = ['Olahraga', 'Seni', 'Akademik', 'Pramuka', 'Lainnya']
 
@@ -27,6 +31,8 @@ export default function EkskulPage() {
   const aktif = ekskul.filter(e => e.aktif)
   const daftarKat = ['Semua', ...URUTAN_KAT.filter(k => aktif.some(e => e.kategori === k))]
   const tampil = kategori === 'Semua' ? aktif : aktif.filter(e => e.kategori === kategori)
+
+  const pg = usePaginasi(tampil, EKSKUL_PER_HALAMAN)
 
   const terpilih = indeks === null ? null : tampil[indeks]
 
@@ -80,7 +86,7 @@ export default function EkskulPage() {
           <div className="max-w-7xl mx-auto flex flex-wrap gap-2 items-center">
             <span className="text-[12px] font-semibold text-ink-4 uppercase tracking-wide mr-1">Kategori:</span>
             {daftarKat.map(k => (
-              <button key={k} onClick={() => { setKategori(k); setIndeks(null) }}
+              <button key={k} onClick={() => { setKategori(k); setIndeks(null); pg.kembaliKeAwal() }}
                 className={`px-3 py-1 text-[12px] font-medium border transition-colors
                   ${kategori === k ? 'bg-ink text-white border-ink' : 'bg-white text-ink-3 border-border hover:border-ink'}`}>
                 {k}
@@ -90,7 +96,7 @@ export default function EkskulPage() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-12" ref={pg.anchor}>
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -101,8 +107,8 @@ export default function EkskulPage() {
           <p className="text-ink-4 text-center py-16">Belum ada ekstrakurikuler pada kategori ini.</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {tampil.map((e: Ekskul, i) => (
-              <button key={e.id} onClick={() => setIndeks(i)}
+            {pg.tampil.map((e: Ekskul) => (
+              <button key={e.id} onClick={() => setIndeks(tampil.findIndex(x => x.id === e.id))}
                 aria-label={`Lihat detail ${e.nama}`}
                 className="border border-border hover:border-ink transition-colors overflow-hidden
                            flex flex-col text-left group focus:outline-none focus:ring-2 focus:ring-ink">
@@ -138,6 +144,14 @@ export default function EkskulPage() {
             ))}
           </div>
         )}
+
+        <Paginasi
+          halaman={pg.halaman}
+          totalHalaman={pg.totalHalaman}
+          onGanti={pg.gantiHalaman}
+          totalItem={pg.total}
+          onTampilkanSemua={pg.tampilkanSemua}
+        />
       </div>
 
       {/* Panel detail */}
