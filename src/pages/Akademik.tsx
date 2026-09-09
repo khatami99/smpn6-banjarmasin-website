@@ -38,16 +38,21 @@ export default function Akademik() {
               <p className="text-ink-4 text-sm border border-border p-6">Data mata pelajaran belum diisi.</p>
             ) : (
               <div className="border border-border">
-                <div className="grid grid-cols-[1fr_80px] bg-surface border-b border-border text-[11px] font-bold tracking-widest uppercase text-ink-4">
+                {/* Lebar kolom kanan harus muat label "JP/Minggu" (±88px)
+                    beserta padding-nya, kalau tidak teksnya keluar dari tabel. */}
+                <div className="grid grid-cols-[1fr_76px] sm:grid-cols-[1fr_124px] bg-surface border-b border-border text-[11px] font-bold tracking-wide uppercase text-ink-4">
                   <div className="px-4 py-2.5">Mata Pelajaran</div>
-                  <div className="px-4 py-2.5 text-right">JP/Minggu</div>
+                  <div className="px-3 sm:px-4 py-2.5 text-right whitespace-nowrap">
+                    <span className="sm:hidden">JP</span>
+                    <span className="hidden sm:inline">JP/Minggu</span>
+                  </div>
                 </div>
                 <div className="divide-y divide-border">
                   {akademik.mapel.map((m, i) => (
                     <div key={`${m.nama}-${i}`}
-                      className="grid grid-cols-[1fr_80px] text-[14px] hover:bg-off-white transition-colors">
+                      className="grid grid-cols-[1fr_76px] sm:grid-cols-[1fr_124px] text-[14px] hover:bg-off-white transition-colors">
                       <div className="px-4 py-3 text-ink">{m.nama}</div>
-                      <div className="px-4 py-3 text-ink-3 text-right">{m.jam}</div>
+                      <div className="px-3 sm:px-4 py-3 text-ink-3 text-right">{m.jam}</div>
                     </div>
                   ))}
                 </div>
