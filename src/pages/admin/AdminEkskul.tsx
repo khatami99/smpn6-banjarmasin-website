@@ -33,9 +33,11 @@ export default function AdminEkskul() {
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault()
     setSaving(true)
+    // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+    const data = { ...form, nama: kapitalJudul(form.nama), pembina: kapitalNama(form.pembina) }
     try {
-      if (mode === 'add') await addEkskul(form)
-      else if (editId) await updateEkskul(editId, form)
+      if (mode === 'add') await addEkskul(data)
+      else if (editId) await updateEkskul(editId, data)
       setMode('list')
     } catch { alert('Gagal menyimpan.') }
     finally { setSaving(false) }

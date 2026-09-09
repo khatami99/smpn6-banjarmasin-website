@@ -54,9 +54,11 @@ export default function AdminHalaman() {
     if (errorSlug) return
     setSaving(true)
     setErrorSimpan(null)
+    // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+    const data = { ...form, judul: kapitalJudul(form.judul), eyebrow: kapitalJudul(form.eyebrow ?? '') }
     try {
-      if (mode === 'edit' && editId) await updateHalaman(editId, form)
-      else await addHalaman(form)
+      if (mode === 'edit' && editId) await updateHalaman(editId, data)
+      else await addHalaman(data)
       setMode('list')
     } catch (err) {
       const kode = (err as { code?: string }).code

@@ -64,7 +64,19 @@ export default function AdminProfil() {
     setSaving(true)
     try {
       const misi = misiText.split('\n').map(m => m.trim()).filter(Boolean)
-      await updateProfile({ ...form, misi })
+      // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+      await updateProfile({
+        ...form,
+        misi,
+        nama: kapitalJudul(form.nama),
+        statusSekolah: kapitalJudul(form.statusSekolah),
+        bentukPendidikan: kapitalJudul(form.bentukPendidikan),
+        kepalaSekolah: kapitalNama(form.kepalaSekolah),
+        kelurahan: kapitalNama(form.kelurahan),
+        kecamatan: kapitalNama(form.kecamatan),
+        kota: kapitalNama(form.kota),
+        provinsi: kapitalNama(form.provinsi),
+      })
       setDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)

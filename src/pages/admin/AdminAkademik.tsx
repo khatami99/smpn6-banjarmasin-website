@@ -68,10 +68,14 @@ export default function AdminAkademik() {
       // Buang baris kosong supaya tidak tampil sebagai baris hampa di website
       await updateAkademik({
         ...form,
-        mapel: form.mapel.filter(m => m.nama.trim()),
+        // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+        judulKalender: kapitalJudul(form.judulKalender),
+        mapel: form.mapel.filter(m => m.nama.trim())
+          .map(m => ({ ...m, nama: kapitalJudul(m.nama) })),
         kalender: form.kalender.filter(k => k.bulan.trim() || k.kegiatan.trim()),
-        info: form.info.filter(i => i.label.trim() || i.nilai.trim()),
-        programUnggulan: form.programUnggulan.filter(p => p.trim()),
+        info: form.info.filter(i => i.label.trim() || i.nilai.trim())
+          .map(i => ({ ...i, label: kapitalJudul(i.label) })),
+        programUnggulan: form.programUnggulan.filter(p => p.trim()).map(kapitalJudul),
       })
       setDirty(false)
       setSaved(true)

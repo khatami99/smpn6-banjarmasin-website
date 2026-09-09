@@ -35,9 +35,11 @@ export default function AdminGaleri() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSaving(true)
+    // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+    const data = { ...form, judul: kapitalJudul(form.judul) }
     try {
-      if (mode === 'edit' && editId) await updateGaleri(editId, form)
-      else await addGaleri(form)
+      if (mode === 'edit' && editId) await updateGaleri(editId, data)
+      else await addGaleri(data)
       setForm(EMPTY)
       setMode('list')
     } catch { alert('Gagal menyimpan.') }

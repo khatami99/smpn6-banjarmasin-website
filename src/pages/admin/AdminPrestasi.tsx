@@ -43,9 +43,16 @@ export default function AdminPrestasi() {
   const handleSubmit = async (ev: FormEvent) => {
     ev.preventDefault()
     setSaving(true)
+    // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+    const data = {
+      ...form,
+      judul: kapitalJudul(form.judul),
+      peringkat: kapitalJudul(form.peringkat),
+      pemenang: kapitalNama(form.pemenang),
+    }
     try {
-      if (mode === 'add') await addPrestasi(form)
-      else if (editId) await updatePrestasi(editId, form)
+      if (mode === 'add') await addPrestasi(data)
+      else if (editId) await updatePrestasi(editId, data)
       setMode('list')
     } catch { alert('Gagal menyimpan.') }
     finally { setSaving(false) }

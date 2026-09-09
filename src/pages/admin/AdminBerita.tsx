@@ -47,9 +47,11 @@ export default function AdminBerita() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSaving(true)
+    // Pengaman: tombol simpan bisa ditekan tanpa keluar dari kolom dulu
+    const data = { ...form, judul: kapitalJudul(form.judul), penulis: kapitalNama(form.penulis) }
     try {
-      if (mode === 'add') await addNews(form)
-      else if (editId) await updateNews(editId, form)
+      if (mode === 'add') await addNews(data)
+      else if (editId) await updateNews(editId, data)
       setMode('list')
     } catch { alert('Gagal menyimpan.') }
     finally { setSaving(false) }
