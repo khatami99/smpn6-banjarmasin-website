@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import EmojiPicker from '../../components/EmojiPicker'
 import ImageUrlField from '../../components/ImageUrlField'
-import SafeImage from '../../components/SafeImage'
 import { useEkskul } from '../../hooks/useFirestore'
 import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { Ekskul } from '../../types'
@@ -148,20 +147,11 @@ export default function AdminEkskul() {
           {ekskul.map(e => (
             <div key={e.id}
               className={`border p-4 flex gap-3 ${e.aktif ? 'border-border' : 'border-border opacity-50'}`}>
-              {/* Emoji tetap tampil walau sudah ada foto */}
-              <div className="relative w-11 h-11 flex-shrink-0">
-                {e.foto ? (
-                  <>
-                    <SafeImage src={e.foto} alt={e.nama} className="w-full h-full object-cover" />
-                    <span className="absolute -right-1 -bottom-1 w-5 h-5 bg-white border border-border
-                                     flex items-center justify-center text-[11px] leading-none">
-                      {e.emoji}
-                    </span>
-                  </>
-                ) : (
-                  <span className="w-full h-full flex items-center justify-center text-2xl">{e.emoji}</span>
-                )}
-              </div>
+              {/* Daftar admin sengaja memakai emoji saja — thumbnail foto
+                  membuat baris jadi ramai dan sulit dipindai cepat. */}
+              <span className="w-11 h-11 flex-shrink-0 flex items-center justify-center text-2xl">
+                {e.emoji}
+              </span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-semibold text-ink">{e.nama}</span>
