@@ -2,7 +2,17 @@ import { useState, useEffect, type FormEvent, type ReactNode } from 'react'
 import { useAkademik } from '../../hooks/useFirestore'
 import type { AkademikData } from '../../types'
 
-const INPUT = 'w-full border border-border px-3 py-2 text-[14px] text-ink focus:outline-none focus:border-ink'
+// Sengaja tanpa lebar: kalau kelas dasar memuat w-full, penimpaan seperti
+// w-20 akan kalah karena Tailwind menaruh w-full lebih belakang di CSS.
+const FIELD = 'border border-border px-3 py-2 text-[14px] text-ink focus:outline-none focus:border-ink'
+const INPUT = `${FIELD} w-full`
+const FIELD_ISI = `${FIELD} flex-1 min-w-0`
+
+function LabelKolom({ children }: { children: ReactNode }) {
+  return (
+    <div className="text-[11px] font-semibold text-ink-4 uppercase tracking-wide">{children}</div>
+  )
+}
 
 function Kotak({ judul, desc, children }: { judul: string; desc?: string; children: ReactNode }) {
   return (
@@ -90,15 +100,22 @@ export default function AdminAkademik() {
 
         {/* Mata pelajaran */}
         <Kotak judul="Mata Pelajaran" desc="JP = jam pelajaran per minggu.">
+          <div className="flex gap-2 px-1">
+            <LabelKolom>Nama mata pelajaran</LabelKolom>
+            <div className="ml-auto flex gap-2">
+              <LabelKolom>JP</LabelKolom>
+              <span className="w-8" />
+            </div>
+          </div>
           <div className="space-y-2">
             {form.mapel.map((m, i) => (
               <div key={i} className="flex gap-2">
-                <input className={INPUT} value={m.nama} placeholder="Nama mata pelajaran"
+                <input className={FIELD_ISI} value={m.nama} placeholder="Nama mata pelajaran"
                   onChange={e => {
                     const baru = [...form.mapel]; baru[i] = { ...baru[i], nama: e.target.value }
                     ubah('mapel', baru)
                   }} />
-                <input type="number" min={0} className={`${INPUT} w-20 flex-shrink-0`} value={m.jam}
+                <input type="number" min={0} className={`${FIELD} w-20 flex-shrink-0`} value={m.jam}
                   onChange={e => {
                     const baru = [...form.mapel]; baru[i] = { ...baru[i], jam: Number(e.target.value) }
                     ubah('mapel', baru)
@@ -124,15 +141,19 @@ export default function AdminAkademik() {
               placeholder="Kalender Akademik 2026/2027" />
           </div>
 
-          <div className="space-y-2 pt-2">
+          <div className="flex gap-2 px-1 pt-2">
+            <span className="w-28 flex-shrink-0"><LabelKolom>Bulan</LabelKolom></span>
+            <LabelKolom>Kegiatan</LabelKolom>
+          </div>
+          <div className="space-y-2">
             {form.kalender.map((k, i) => (
               <div key={i} className="flex gap-2">
-                <input className={`${INPUT} w-28 flex-shrink-0`} value={k.bulan} placeholder="Jul 2026"
+                <input className={`${FIELD} w-28 flex-shrink-0`} value={k.bulan} placeholder="Jul 2026"
                   onChange={e => {
                     const baru = [...form.kalender]; baru[i] = { ...baru[i], bulan: e.target.value }
                     ubah('kalender', baru)
                   }} />
-                <input className={INPUT} value={k.kegiatan} placeholder="Kegiatan pada bulan tersebut"
+                <input className={FIELD_ISI} value={k.kegiatan} placeholder="Kegiatan pada bulan tersebut"
                   onChange={e => {
                     const baru = [...form.kalender]; baru[i] = { ...baru[i], kegiatan: e.target.value }
                     ubah('kalender', baru)
@@ -149,15 +170,19 @@ export default function AdminAkademik() {
 
         {/* Info sidebar */}
         <Kotak judul="Info Penting" desc="Kotak hitam di sisi kanan halaman Akademik.">
+          <div className="flex gap-2 px-1">
+            <span className="w-40 flex-shrink-0"><LabelKolom>Label</LabelKolom></span>
+            <LabelKolom>Isi</LabelKolom>
+          </div>
           <div className="space-y-2">
             {form.info.map((it, i) => (
               <div key={i} className="flex gap-2">
-                <input className={`${INPUT} w-40 flex-shrink-0`} value={it.label} placeholder="Kurikulum"
+                <input className={`${FIELD} w-40 flex-shrink-0`} value={it.label} placeholder="Kurikulum"
                   onChange={e => {
                     const baru = [...form.info]; baru[i] = { ...baru[i], label: e.target.value }
                     ubah('info', baru)
                   }} />
-                <input className={INPUT} value={it.nilai} placeholder="Kurikulum Merdeka"
+                <input className={FIELD_ISI} value={it.nilai} placeholder="Kurikulum Merdeka"
                   onChange={e => {
                     const baru = [...form.info]; baru[i] = { ...baru[i], nilai: e.target.value }
                     ubah('info', baru)
@@ -177,7 +202,7 @@ export default function AdminAkademik() {
           <div className="space-y-2">
             {form.programUnggulan.map((p, i) => (
               <div key={i} className="flex gap-2">
-                <input className={INPUT} value={p} placeholder="Nama program"
+                <input className={FIELD_ISI} value={p} placeholder="Nama program"
                   onChange={e => {
                     const baru = [...form.programUnggulan]; baru[i] = e.target.value
                     ubah('programUnggulan', baru)
