@@ -73,6 +73,7 @@ export interface Prestasi {
   tahun: number
   bidang: string
   peringkat: string
+  deskripsi?: string
   foto?: string
   createdAt?: string
 }

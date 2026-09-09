@@ -6,7 +6,7 @@ import type { Prestasi } from '../../types'
 
 const EMPTY: Omit<Prestasi, 'id'> = {
   judul: '', pemenang: '', kelas: '', tingkat: 'Kota',
-  tahun: new Date().getFullYear(), bidang: '', peringkat: '', foto: '',
+  tahun: new Date().getFullYear(), bidang: '', peringkat: '', deskripsi: '', foto: '',
 }
 
 const TINGKAT_LIST = ['Sekolah', 'Kota', 'Provinsi', 'Nasional', 'Internasional'] as const
@@ -34,7 +34,8 @@ export default function AdminPrestasi() {
   const openAdd = () => { setForm(EMPTY); setEditId(null); setFotoValid(true); setMode('add') }
   const openEdit = (p: Prestasi) => {
     setForm({ judul: p.judul, pemenang: p.pemenang, kelas: p.kelas,
-      tingkat: p.tingkat, tahun: p.tahun, bidang: p.bidang, peringkat: p.peringkat, foto: p.foto ?? '' })
+      tingkat: p.tingkat, tahun: p.tahun, bidang: p.bidang, peringkat: p.peringkat,
+      deskripsi: p.deskripsi ?? '', foto: p.foto ?? '' })
     setEditId(p.id!)
     setFotoValid(true)
     setMode('edit')
@@ -119,6 +120,17 @@ export default function AdminPrestasi() {
               </select>
             </div>
           </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">
+              Deskripsi
+              <span className="ml-1 font-normal text-ink-4 normal-case tracking-normal">(opsional, tampil saat kartu diklik)</span>
+            </label>
+            <textarea className={`${INPUT} resize-y`} rows={3}
+              value={form.deskripsi ?? ''}
+              onChange={e => setForm(p => ({ ...p, deskripsi: e.target.value }))}
+              placeholder="Ceritakan singkat jalannya lomba, lawan yang dihadapi, atau kesan pembina." />
+          </div>
+
           <ImageUrlField
             label="Foto Prestasi"
             value={form.foto ?? ''}
