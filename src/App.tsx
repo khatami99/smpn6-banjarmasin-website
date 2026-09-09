@@ -10,6 +10,7 @@ import Kesiswaan from './pages/Kesiswaan'
 import PrestasiPage from './pages/Prestasi'
 import { BeritaList, BeritaDetail } from './pages/Berita'
 import Galeri from './pages/Galeri'
+import HalamanKustom from './pages/HalamanKustom'
 
 // Panel admin dimuat terpisah: pengunjung biasa tidak perlu ikut mengunduh
 // Firebase Auth maupun editor teks yang hanya dipakai staf sekolah.
@@ -23,6 +24,8 @@ const AdminPengumuman = lazy(() => import('./pages/admin/AdminPengumuman'))
 const AdminEkskul = lazy(() => import('./pages/admin/AdminEkskul'))
 const AdminPrestasi = lazy(() => import('./pages/admin/AdminPrestasi'))
 const AdminGaleri = lazy(() => import('./pages/admin/AdminGaleri'))
+const AdminHalaman = lazy(() => import('./pages/admin/AdminHalaman'))
+const AdminAkademik = lazy(() => import('./pages/admin/AdminAkademik'))
 
 function MemuatPanel() {
   return (
@@ -46,6 +49,8 @@ export default function App() {
           <Route path="/berita" element={<BeritaList />} />
           <Route path="/berita/:id" element={<BeritaDetail />} />
           <Route path="/galeri" element={<Galeri />} />
+          {/* Halaman buatan admin. Rute statis di atas tetap diprioritaskan React Router. */}
+          <Route path="/:slug" element={<HalamanKustom />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -61,6 +66,8 @@ export default function App() {
           <Route path="ekskul" element={<AdminEkskul />} />
           <Route path="prestasi" element={<AdminPrestasi />} />
           <Route path="galeri" element={<AdminGaleri />} />
+          <Route path="halaman" element={<AdminHalaman />} />
+          <Route path="akademik" element={<AdminAkademik />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,4 +1,4 @@
-import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi } from '../types'
+import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, AkademikData } from '../types'
 
 export const defaultStats: SchoolStats = {
   siswa: 1247,
@@ -85,3 +85,49 @@ export const defaultPrestasi: Prestasi[] = [
   { judul: 'Finalis Lomba Karya Ilmiah Remaja Bidang Lingkungan Hidup', pemenang: 'Tim KIR SMPN 6 Banjarmasin', kelas: '-', tingkat: 'Nasional', tahun: 2025, bidang: 'Akademik', peringkat: 'Finalis' },
   { judul: 'Juara 2 Lomba Paduan Suara Tingkat Kota', pemenang: 'Paduan Suara SMPN 6', kelas: '-', tingkat: 'Kota', tahun: 2025, bidang: 'Seni', peringkat: 'Juara 2' },
 ]
+
+export const defaultAkademik: AkademikData = {
+  pengantar: 'SMPN 6 Banjarmasin mengimplementasikan Kurikulum Merdeka sesuai kebijakan Kemendikbudristek. Pembelajaran berpusat pada peserta didik dengan pendekatan diferensiasi.',
+  mapel: [
+    { nama: 'Pendidikan Agama & Budi Pekerti', jam: 3 },
+    { nama: 'Pendidikan Pancasila', jam: 3 },
+    { nama: 'Bahasa Indonesia', jam: 6 },
+    { nama: 'Matematika', jam: 5 },
+    { nama: 'Ilmu Pengetahuan Alam (IPA)', jam: 5 },
+    { nama: 'Ilmu Pengetahuan Sosial (IPS)', jam: 4 },
+    { nama: 'Bahasa Inggris', jam: 4 },
+    { nama: 'Pendidikan Jasmani & Kesehatan', jam: 3 },
+    { nama: 'Informatika', jam: 2 },
+    { nama: 'Seni Budaya', jam: 3 },
+    { nama: 'Prakarya', jam: 2 },
+    { nama: 'Bimbingan Konseling', jam: 1 },
+  ],
+  judulKalender: 'Kalender Akademik 2026/2027',
+  kalender: [
+    { bulan: 'Jul 2026', kegiatan: 'Awal Tahun Ajaran 2026/2027 · Masa Orientasi Peserta Didik (MOPD)' },
+    { bulan: 'Agt 2026', kegiatan: 'HUT Kemerdekaan RI · Asesmen Awal Pembelajaran' },
+    { bulan: 'Sep 2026', kegiatan: 'Penilaian Tengah Semester (PTS) Ganjil · 15–20 September' },
+    { bulan: 'Okt 2026', kegiatan: 'Ujian Praktik · Pekan Olahraga Sekolah' },
+    { bulan: 'Nov 2026', kegiatan: 'Penilaian Akhir Semester (PAS) Ganjil · Rapor semester 1' },
+    { bulan: 'Des 2026', kegiatan: 'Libur Semester Ganjil · 20 Des – 2 Jan 2027' },
+    { bulan: 'Jan 2027', kegiatan: 'Awal Semester Genap' },
+    { bulan: 'Mar 2027', kegiatan: 'PTS Semester Genap' },
+    { bulan: 'Apr 2027', kegiatan: 'Asesmen Sumatif Akhir Jenjang (ASAJ) Kelas IX' },
+    { bulan: 'Mei 2027', kegiatan: 'PAS Semester Genap · Pengumuman kelulusan kelas IX' },
+    { bulan: 'Jun 2027', kegiatan: 'Perpisahan Kelas IX · Pembagian rapor · Libur kenaikan kelas' },
+  ],
+  info: [
+    { label: 'Kurikulum', nilai: 'Kurikulum Merdeka' },
+    { label: 'Jam Belajar', nilai: 'Senin–Jumat 07.00–14.00 WITA' },
+    { label: 'Jumlah Kelas', nilai: '36 rombel (12 per tingkat)' },
+    { label: 'Bahasa Pengantar', nilai: 'Bahasa Indonesia' },
+  ],
+  programUnggulan: [
+    'Olimpiade Sains Nasional (OSN)',
+    'Olimpiade Olahraga Siswa (O2SN)',
+    'Festival & Lomba Seni Siswa (FLS2N)',
+    'Karya Ilmiah Remaja (KIR)',
+    'Adiwiyata (Sekolah Ramah Lingkungan)',
+  ],
+  linkKalenderPdf: '',
+}

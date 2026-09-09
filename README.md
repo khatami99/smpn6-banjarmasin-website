@@ -63,3 +63,23 @@ src/
 - Edit profil sekolah
 - Statistik sekolah
 - Rich text editor untuk isi berita
+
+## Aturan Firestore
+
+Setiap koleksi baru harus didaftarkan di **Firebase Console → Firestore Database → Rules**.
+Kalau belum, koleksinya tidak akan bisa dibaca website (error `permission-denied` di konsol browser).
+
+Koleksi `halaman` (fitur Halaman & Tab) memerlukan aturan berikut:
+
+```
+match /halaman/{id} {
+  allow read: if resource.data.published == true || request.auth != null;
+  allow write: if request.auth != null;
+}
+```
+
+Artinya: pengunjung hanya bisa membaca halaman yang sudah diterbitkan, sedangkan
+admin yang sudah login bisa membaca draft sekaligus menambah, mengubah, dan menghapus.
+
+Halaman Akademik memakai dokumen `settings/akademik`, jadi ikut aturan `settings`
+yang sudah ada — tidak perlu tambahan.

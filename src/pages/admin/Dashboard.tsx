@@ -19,11 +19,13 @@ export default function Dashboard() {
   const MENU = [
     { label: 'Edit Statistik Sekolah', desc: 'Jumlah siswa, guru, kelas, akreditasi', to: '/admin/statistik', icon: '📊' },
     { label: 'Edit Profil Sekolah', desc: 'Identitas, visi misi, kontak sekolah', to: '/admin/profil', icon: '🏫' },
+    { label: 'Halaman Akademik', desc: 'Mata pelajaran, kalender, info penting', to: '/admin/akademik', icon: '📚' },
     { label: 'Kelola Berita', desc: 'Tambah, edit, hapus berita & pengumuman', to: '/admin/berita', icon: '📰' },
     { label: 'Pengumuman Banner', desc: 'Teks pengumuman di strip halaman utama', to: '/admin/pengumuman', icon: '📢' },
     { label: 'Kelola Ekskul', desc: 'Data ekstrakurikuler dan jadwal', to: '/admin/ekskul', icon: '⚽' },
     { label: 'Kelola Prestasi', desc: 'Data pencapaian dan penghargaan', to: '/admin/prestasi', icon: '🏆' },
     { label: 'Kelola Galeri', desc: 'Foto dokumentasi & slideshow beranda', to: '/admin/galeri', icon: '🖼️' },
+    { label: 'Halaman & Tab Baru', desc: 'Buat tab sendiri di menu website', to: '/admin/halaman', icon: '📄' },
   ]
 
   return (

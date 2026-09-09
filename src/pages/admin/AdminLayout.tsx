@@ -6,11 +6,13 @@ const NAV = [
   { label: 'Dashboard', to: '/admin', icon: '⊞', exact: true },
   { label: 'Statistik', to: '/admin/statistik', icon: '📊' },
   { label: 'Profil Sekolah', to: '/admin/profil', icon: '🏫' },
+  { label: 'Akademik', to: '/admin/akademik', icon: '📚' },
   { label: 'Berita', to: '/admin/berita', icon: '📰' },
   { label: 'Pengumuman', to: '/admin/pengumuman', icon: '📢' },
   { label: 'Ekskul', to: '/admin/ekskul', icon: '⚽' },
   { label: 'Prestasi', to: '/admin/prestasi', icon: '🏆' },
   { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
+  { label: 'Halaman & Tab', to: '/admin/halaman', icon: '📄' },
 ]
 
 export default function AdminLayout() {

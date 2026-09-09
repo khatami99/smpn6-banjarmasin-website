@@ -4,8 +4,8 @@ import {
   updateDoc, deleteDoc, orderBy, query, where, onSnapshot,
 } from 'firebase/firestore'
 import { db } from '../lib/firebase'
-import { defaultStats, defaultProfile } from '../data/defaults'
-import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement, GaleriItem } from '../types'
+import { defaultStats, defaultProfile, defaultAkademik } from '../data/defaults'
+import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement, GaleriItem, AkademikData, HalamanKustom } from '../types'
 
 // ─── School Stats ───────────────────────────────────────────
 export function useStats() {
@@ -192,3 +192,69 @@ export function useGaleri() {
   return { galeri, loading, addGaleri, updateGaleri, deleteGaleri }
 }
 
+// ─── Akademik ────────────────────────────────────────────────
+export function useAkademik() {
+  const [akademik, setAkademik] = useState<AkademikData>(defaultAkademik)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const ref = doc(db, 'settings', 'akademik')
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) setAkademik({ ...defaultAkademik, ...snap.data() } as AkademikData)
+      setLoading(false)
+    }, () => setLoading(false))
+    return unsub
+  }, [])
+
+  const updateAkademik = async (data: AkademikData) => {
+    await setDoc(doc(db, 'settings', 'akademik'), data, { merge: true })
+  }
+
+  return { akademik, loading, updateAkademik }
+}
+
+// ─── Halaman kustom ──────────────────────────────────────────
+export function useHalaman(publishedOnly = true) {
+  const [halaman, setHalaman] = useState<HalamanKustom[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const col = collection(db, 'halaman')
+    // Sengaja hanya memakai satu klausa: kombinasi where + orderBy akan
+    // menuntut composite index tambahan di Firestore. Urutan dirapikan
+    // di sisi klien saja.
+    const q = publishedOnly ? query(col, where('published', '==', true)) : query(col)
+
+    const unsub = onSnapshot(q, (snap) => {
+      const rows = snap.docs.map(d => ({ id: d.id, ...d.data() } as HalamanKustom))
+      rows.sort((a, b) => (a.urutan ?? 0) - (b.urutan ?? 0) || a.judul.localeCompare(b.judul))
+      setHalaman(rows)
+      setLoading(false)
+    }, (err) => {
+      if ((err as { code?: string }).code === 'permission-denied') {
+        console.error(
+          '[halaman] Firestore menolak akses. Tambahkan aturan untuk koleksi "halaman" ' +
+          'di Firebase Console > Firestore > Rules. Lihat README bagian "Aturan Firestore".',
+        )
+      } else {
+        console.error('[halaman]', err)
+      }
+      setLoading(false)
+    })
+    return unsub
+  }, [publishedOnly])
+
+  const addHalaman = async (data: Omit<HalamanKustom, 'id'>) => {
+    await addDoc(collection(db, 'halaman'), { ...data, createdAt: new Date().toISOString() })
+  }
+
+  const updateHalaman = async (id: string, data: Partial<HalamanKustom>) => {
+    await updateDoc(doc(db, 'halaman', id), data)
+  }
+
+  const deleteHalaman = async (id: string) => {
+    await deleteDoc(doc(db, 'halaman', id))
+  }
+
+  return { halaman, loading, addHalaman, updateHalaman, deleteHalaman }
+}

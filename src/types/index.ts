@@ -89,3 +89,43 @@ export interface Announcement {
   linkLabel?: string
   aktif: boolean
 }
+
+/** Halaman informasi yang dibuat sendiri oleh admin (muncul sebagai tab baru). */
+export interface HalamanKustom {
+  id?: string
+  judul: string
+  slug: string
+  eyebrow?: string
+  ringkasan?: string
+  isi: string
+  tampilDiMenu: boolean
+  published: boolean
+  urutan: number
+  createdAt?: string
+}
+
+export interface MataPelajaran {
+  nama: string
+  jam: number
+}
+
+export interface AgendaKalender {
+  bulan: string
+  kegiatan: string
+}
+
+export interface InfoRingkas {
+  label: string
+  nilai: string
+}
+
+/** Isi halaman Akademik — dulu hardcoded, kini bisa disunting admin. */
+export interface AkademikData {
+  pengantar: string
+  mapel: MataPelajaran[]
+  judulKalender: string
+  kalender: AgendaKalender[]
+  info: InfoRingkas[]
+  programUnggulan: string[]
+  linkKalenderPdf: string
+}

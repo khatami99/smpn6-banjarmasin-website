@@ -40,8 +40,8 @@ export default function AdminPengumuman() {
         </p>
       </div>
 
-      {/* Preview */}
-      {form.teks && (
+      {/* Preview - hanya saat aktif, supaya sesuai tampilan asli */}
+      {form.teks && form.aktif && (
         <div className="bg-yellow border border-border px-5 py-2.5 flex items-center gap-4 mb-6">
           <span className="text-[10px] font-bold tracking-widest uppercase text-ink/60 bg-ink/10 px-2 py-0.5 flex-shrink-0">
             Info
@@ -80,16 +80,32 @@ export default function AdminPengumuman() {
             placeholder="Lihat detail" />
         </div>
 
-        <div className="flex items-center gap-3 pt-1 border-t border-border">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" checked={form.aktif}
-              onChange={e => setForm(p => ({ ...p, aktif: e.target.checked }))}
-              className="w-4 h-4 accent-ink" />
-            <span className="text-[13px] font-medium text-ink">Tampilkan banner</span>
-          </label>
-          {!form.aktif && (
-            <span className="text-[11px] text-ink-4">(banner disembunyikan)</span>
-          )}
+        {/* Sakelar on/off yang jelas terlihat */}
+        <div className="pt-1 border-t border-border">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={form.aktif}
+            onClick={() => setForm(p => ({ ...p, aktif: !p.aktif }))}
+            className={`w-full flex items-center justify-between gap-4 border p-4 text-left transition-colors
+              ${form.aktif ? 'border-green/40 bg-green/5' : 'border-border bg-surface'}`}
+          >
+            <span>
+              <span className="block text-[14px] font-semibold text-ink">
+                {form.aktif ? 'Pengumuman AKTIF' : 'Pengumuman NONAKTIF'}
+              </span>
+              <span className="block text-[12px] text-ink-4 mt-0.5">
+                {form.aktif
+                  ? 'Banner kuning tampil di halaman beranda.'
+                  : 'Banner disembunyikan dari pengunjung.'}
+              </span>
+            </span>
+            <span className={`relative w-12 h-7 flex-shrink-0 rounded-full transition-colors
+              ${form.aktif ? 'bg-green' : 'bg-border-dk'}`}>
+              <span className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all
+                ${form.aktif ? 'left-6' : 'left-1'}`} />
+            </span>
+          </button>
         </div>
 
         <div className="flex items-center gap-3">
