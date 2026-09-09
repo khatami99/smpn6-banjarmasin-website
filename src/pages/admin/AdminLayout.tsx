@@ -1,4 +1,4 @@
-import { useState, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
@@ -14,6 +14,79 @@ const NAV = [
   { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
   { label: 'Halaman & Tab', to: '/admin/halaman', icon: '📄' },
 ]
+
+/** Tombol akun di pojok kanan atas beserta menu turunnya. */
+function MenuAkun({ email, onLogout }: { email: string; onLogout: () => void }) {
+  const [buka, setBuka] = useState(false)
+  const wadah = useRef<HTMLDivElement>(null)
+
+  // Tutup saat mengeklik di luar menu atau menekan Esc
+  useEffect(() => {
+    if (!buka) return
+    const klikLuar = (e: MouseEvent) => {
+      if (wadah.current && !wadah.current.contains(e.target as Node)) setBuka(false)
+    }
+    const tekanEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setBuka(false) }
+    document.addEventListener('mousedown', klikLuar)
+    document.addEventListener('keydown', tekanEsc)
+    return () => {
+      document.removeEventListener('mousedown', klikLuar)
+      document.removeEventListener('keydown', tekanEsc)
+    }
+  }, [buka])
+
+  const inisial = (email[0] ?? '?').toUpperCase()
+
+  return (
+    <div className="relative" ref={wadah}>
+      <button
+        onClick={() => setBuka(o => !o)}
+        aria-haspopup="menu"
+        aria-expanded={buka}
+        className={`flex items-center gap-2.5 pl-1.5 pr-2 py-1.5 border transition-colors
+          ${buka ? 'border-ink bg-surface' : 'border-transparent hover:border-border hover:bg-surface'}`}
+      >
+        <span className="w-8 h-8 flex-shrink-0 bg-ink text-yellow flex items-center justify-center text-[13px] font-semibold">
+          {inisial}
+        </span>
+        <span className="hidden sm:block text-[13px] text-ink-3 max-w-[180px] truncate">{email}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+          className={`flex-shrink-0 text-ink-4 transition-transform ${buka ? 'rotate-180' : ''}`}>
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      {buka && (
+        <div role="menu"
+          className="absolute right-0 top-full mt-1 w-64 bg-white border border-border shadow-lg z-50">
+          <div className="px-4 py-3 border-b border-border">
+            <div className="text-[11px] text-ink-4 uppercase tracking-wide">Masuk sebagai</div>
+            <div className="text-[13px] text-ink font-medium break-all mt-0.5">{email}</div>
+          </div>
+
+          <a href="/" target="_blank" rel="noreferrer" role="menuitem"
+            onClick={() => setBuka(false)}
+            className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-ink-3 hover:bg-off-white hover:text-ink transition-colors no-underline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" />
+            </svg>
+            Lihat website publik
+          </a>
+
+          <button onClick={onLogout} role="menuitem"
+            className="flex items-center gap-2.5 w-full px-4 py-2.5 text-[13px] text-red-600 hover:bg-red-50 transition-colors border-t border-border">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+            Keluar
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function AdminLayout() {
   const { user, loading, logout } = useAuth()
@@ -32,6 +105,8 @@ export default function AdminLayout() {
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname.startsWith(to)
+
+  const judulHalaman = NAV.find(n => isActive(n.to, n.exact) && n.to !== '/admin')?.label ?? 'Dashboard'
 
   return (
     <div className="min-h-screen bg-off-white flex">
@@ -75,31 +150,23 @@ export default function AdminLayout() {
             </Link>
           ))}
         </nav>
-
-        {/* User info + logout */}
-        <div className="px-3 py-4 border-t border-white/10">
-          <div className="px-3 mb-2">
-            <div className="text-[11px] text-white/30">Masuk sebagai</div>
-            <div className="text-[12px] text-white/70 truncate">{user.email}</div>
-          </div>
-          <button onClick={logout}
-            className="flex items-center gap-2 w-full px-3 py-2 text-[12px] text-white/40 hover:text-white transition-colors">
-            <span>→</span> Keluar
-          </button>
-        </div>
       </aside>
 
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile topbar */}
-        <header className="md:hidden bg-ink px-4 py-3 flex items-center justify-between">
-          <button onClick={() => setSidebarOpen(true)} className="text-white p-1">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-          </button>
-          <span className="text-white font-semibold text-sm">Admin Panel</span>
-          <button onClick={logout} className="text-white/50 text-xs hover:text-white">Keluar</button>
+        {/* Topbar: hamburger di kiri (mobile), menu akun di kanan */}
+        <header className="bg-white border-b border-border px-4 md:px-6 py-2.5 flex items-center justify-between gap-4 flex-shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <button onClick={() => setSidebarOpen(true)}
+              className="md:hidden p-1 text-ink flex-shrink-0" aria-label="Buka menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <span className="text-[13px] font-semibold text-ink truncate">{judulHalaman}</span>
+          </div>
+
+          <MenuAkun email={user.email ?? '—'} onLogout={logout} />
         </header>
 
         <main className="flex-1 overflow-auto">
