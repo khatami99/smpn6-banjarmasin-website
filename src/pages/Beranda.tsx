@@ -247,7 +247,7 @@ export default function Beranda() {
                 { label: 'Kalender Akademik', to: '/akademik#kalender' },
                 { label: 'Daftar Prestasi', to: '/prestasi' },
                 { label: 'Galeri Foto', to: '/galeri' },
-                { label: 'Ekstrakurikuler', to: '/kesiswaan' },
+                { label: 'Ekstrakurikuler', to: '/ekskul' },
                 { label: 'Kontak Sekolah', to: '/profil#kontak' },
               ].map(l => (
                 <Link key={l.label} to={l.to}
@@ -306,7 +306,7 @@ export default function Beranda() {
               <h2 className="font-serif text-3xl text-ink">Ekstrakurikuler</h2>
               <p className="text-ink-4 text-sm mt-1">Mengembangkan bakat dan minat di luar kelas</p>
             </div>
-            <Link to="/kesiswaan"
+            <Link to="/ekskul"
               className="text-[13px] font-semibold text-ink hover:underline no-underline hidden md:block">
               Lihat semua →
             </Link>

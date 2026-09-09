@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import SafeImage from '../components/SafeImage'
 import { useEkskul } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
@@ -71,11 +72,19 @@ export default function Kesiswaan() {
 
         {/* Ekskul */}
         <section>
-          <div className="eyebrow mb-2">Pilihan Kegiatan</div>
-          <h2 className="font-serif text-2xl text-ink mb-2">Ekstrakurikuler</h2>
-          <p className="text-ink-4 text-[14px] mb-8">
-            {aktif.length} ekskul aktif tersedia untuk pengembangan bakat siswa
-          </p>
+          <div className="flex items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="eyebrow mb-2">Pilihan Kegiatan</div>
+              <h2 className="font-serif text-2xl text-ink mb-2">Ekstrakurikuler</h2>
+              <p className="text-ink-4 text-[14px]">
+                {aktif.length} ekskul aktif tersedia untuk pengembangan bakat siswa
+              </p>
+            </div>
+            <Link to="/ekskul"
+              className="text-[13px] font-semibold text-ink hover:underline no-underline hidden md:block flex-shrink-0">
+              Lihat semua →
+            </Link>
+          </div>
 
           {loading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -85,7 +94,7 @@ export default function Kesiswaan() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {aktif.map((e: Ekskul) => (
+              {aktif.slice(0, 8).map((e: Ekskul) => (
                 <div key={e.id}
                   className="border border-border hover:border-ink transition-colors group overflow-hidden flex flex-col">
                   {/* Area gambar selalu ada agar tinggi semua kartu seragam.
@@ -127,6 +136,14 @@ export default function Kesiswaan() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {aktif.length > 8 && (
+            <div className="mt-8 text-center">
+              <Link to="/ekskul" className="btn-outline">
+                Lihat semua {aktif.length} ekstrakurikuler →
+              </Link>
             </div>
           )}
         </section>

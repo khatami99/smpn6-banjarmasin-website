@@ -9,6 +9,7 @@ import Akademik from './pages/Akademik'
 import Kesiswaan from './pages/Kesiswaan'
 import PrestasiPage from './pages/Prestasi'
 import { BeritaList, BeritaDetail } from './pages/Berita'
+import EkskulPage from './pages/Ekskul'
 import Galeri from './pages/Galeri'
 import HalamanKustom from './pages/HalamanKustom'
 
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="/profil" element={<Profil />} />
           <Route path="/akademik" element={<Akademik />} />
           <Route path="/kesiswaan" element={<Kesiswaan />} />
+          <Route path="/ekskul" element={<EkskulPage />} />
           <Route path="/prestasi" element={<PrestasiPage />} />
           <Route path="/berita" element={<BeritaList />} />
           <Route path="/berita/:id" element={<BeritaDetail />} />

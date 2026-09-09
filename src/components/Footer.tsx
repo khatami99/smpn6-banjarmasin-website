@@ -74,7 +74,7 @@ export default function Footer() {
               {[
                 { label: 'Berita Sekolah', to: '/berita' },
                 { label: 'Kalender Akademik', to: '/akademik#kalender' },
-                { label: 'Ekstrakurikuler', to: '/kesiswaan' },
+                { label: 'Ekstrakurikuler', to: '/ekskul' },
                 { label: 'Galeri Foto', to: '/galeri' },
               ].map(l => (
                 <li key={l.to}>

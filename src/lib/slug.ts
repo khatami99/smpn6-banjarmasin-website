@@ -1,7 +1,7 @@
 /** Alamat yang sudah dipakai halaman bawaan — tidak boleh dipakai halaman kustom. */
 export const SLUG_TERPAKAI = [
   'admin', 'profil', 'akademik', 'kesiswaan', 'prestasi',
-  'berita', 'galeri', 'assets', 'api',
+  'berita', 'galeri', 'ekskul', 'assets', 'api',
 ]
 
 /** Ubah judul menjadi alamat URL: "Fasilitas Sekolah" -> "fasilitas-sekolah" */

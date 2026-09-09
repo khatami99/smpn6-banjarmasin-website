@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: 'Profil', to: '/profil' },
   { label: 'Akademik', to: '/akademik' },
   { label: 'Kesiswaan', to: '/kesiswaan' },
+  { label: 'Ekskul', to: '/ekskul' },
   { label: 'Prestasi', to: '/prestasi' },
   { label: 'Berita', to: '/berita' },
   { label: 'Galeri', to: '/galeri' },
