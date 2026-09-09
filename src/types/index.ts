@@ -59,6 +59,7 @@ export interface Ekskul {
   jadwal: string
   pembina: string
   emoji: string
+  foto?: string
   kategori: 'Olahraga' | 'Seni' | 'Akademik' | 'Pramuka' | 'Lainnya'
   aktif: boolean
 }

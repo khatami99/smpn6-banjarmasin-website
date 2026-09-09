@@ -1,3 +1,4 @@
+import SafeImage from '../components/SafeImage'
 import { useEkskul } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 import type { Ekskul } from '../types'
@@ -86,8 +87,13 @@ export default function Kesiswaan() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {aktif.map((e: Ekskul) => (
                 <div key={e.id}
-                  className="border border-border p-5 hover:border-ink transition-colors group">
-                  <span className="text-3xl mb-4 block">{e.emoji}</span>
+                  className="border border-border hover:border-ink transition-colors group overflow-hidden">
+                  {e.foto && (
+                    <SafeImage src={e.foto} alt={e.nama} className="w-full aspect-[4/3] object-cover" />
+                  )}
+                  <div className="p-5">
+                  {/* Emoji hanya dipakai saat belum ada foto, agar tidak mubazir */}
+                  {!e.foto && <span className="text-3xl mb-4 block">{e.emoji}</span>}
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="text-[14px] font-semibold text-ink">{e.nama}</div>
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 flex-shrink-0
@@ -103,6 +109,7 @@ export default function Kesiswaan() {
                     <div className="text-[11px] text-ink-4">
                       <span className="font-medium text-ink-3">Pembina:</span> {e.pembina}
                     </div>
+                  </div>
                   </div>
                 </div>
               ))}

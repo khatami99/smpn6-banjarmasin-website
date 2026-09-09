@@ -1,10 +1,13 @@
 import { useState, type FormEvent } from 'react'
+import EmojiPicker from '../../components/EmojiPicker'
+import ImageUrlField from '../../components/ImageUrlField'
+import SafeImage from '../../components/SafeImage'
 import { useEkskul } from '../../hooks/useFirestore'
 import { kapitalJudul, kapitalNama } from '../../lib/teks'
 import type { Ekskul } from '../../types'
 
 const EMPTY: Omit<Ekskul, 'id'> = {
-  nama: '', deskripsi: '', jadwal: '', pembina: '', emoji: '⭐',
+  nama: '', deskripsi: '', jadwal: '', pembina: '', emoji: '⭐', foto: '',
   kategori: 'Lainnya', aktif: true,
 }
 
@@ -17,16 +20,19 @@ export default function AdminEkskul() {
   const [form, setForm] = useState<Omit<Ekskul, 'id'>>(EMPTY)
   const [editId, setEditId] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [fotoValid, setFotoValid] = useState(true)
 
   const set = (key: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
       setForm(p => ({ ...p, [key]: e.target.value }))
 
-  const openAdd = () => { setForm(EMPTY); setEditId(null); setMode('add') }
+  const openAdd = () => { setForm(EMPTY); setEditId(null); setFotoValid(true); setMode('add') }
   const openEdit = (e: Ekskul) => {
     setForm({ nama: e.nama, deskripsi: e.deskripsi, jadwal: e.jadwal,
-      pembina: e.pembina, emoji: e.emoji, kategori: e.kategori, aktif: e.aktif })
+      pembina: e.pembina, emoji: e.emoji, foto: e.foto ?? '',
+      kategori: e.kategori, aktif: e.aktif })
     setEditId(e.id!)
+    setFotoValid(true)
     setMode('edit')
   }
 
@@ -64,8 +70,8 @@ export default function AdminEkskul() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-[80px_1fr] gap-3">
             <div>
-              <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Emoji</label>
-              <input className={INPUT} value={form.emoji} onChange={set('emoji')} maxLength={4} />
+              <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Ikon</label>
+              <EmojiPicker value={form.emoji} onChange={emoji => setForm(p => ({ ...p, emoji }))} />
             </div>
             <div>
               <label className="block text-[12px] font-semibold text-ink-3 uppercase tracking-wide mb-1.5">Nama Ekskul</label>
@@ -94,16 +100,24 @@ export default function AdminEkskul() {
             <input className={INPUT} value={form.pembina} onChange={set('pembina')} autoCapitalize="words"
               onBlur={() => setForm(p => ({ ...p, pembina: kapitalNama(p.pembina) }))} />
           </div>
+          <ImageUrlField
+            label="Foto Ekskul"
+            value={form.foto ?? ''}
+            onChange={url => setForm(p => ({ ...p, foto: url }))}
+            onValidChange={setFotoValid}
+          />
+
           <label className="flex items-center gap-2 cursor-pointer pt-1">
             <input type="checkbox" checked={form.aktif}
               onChange={e => setForm(p => ({ ...p, aktif: e.target.checked }))} className="w-4 h-4 accent-ink" />
             <span className="text-[13px] font-medium text-ink">Ekskul aktif</span>
           </label>
           <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="btn-black disabled:opacity-50">
+            <button type="submit" disabled={saving || !fotoValid} className="btn-black disabled:opacity-50">
               {saving ? 'Menyimpan...' : 'Simpan'}
             </button>
             <button type="button" onClick={() => setMode('list')} className="btn-outline">Batal</button>
+            {!fotoValid && <span className="text-[12px] text-red-600">Perbaiki URL foto dulu</span>}
           </div>
         </form>
       </div>
@@ -134,7 +148,9 @@ export default function AdminEkskul() {
           {ekskul.map(e => (
             <div key={e.id}
               className={`border p-4 flex gap-3 ${e.aktif ? 'border-border' : 'border-border opacity-50'}`}>
-              <span className="text-2xl flex-shrink-0">{e.emoji}</span>
+              {e.foto
+                ? <SafeImage src={e.foto} alt={e.nama} className="w-11 h-11 object-cover flex-shrink-0" />
+                : <span className="text-2xl flex-shrink-0 w-11 h-11 flex items-center justify-center">{e.emoji}</span>}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-semibold text-ink">{e.nama}</span>
