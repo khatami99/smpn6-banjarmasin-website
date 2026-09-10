@@ -2,19 +2,52 @@ import { useState, useEffect, useRef, Suspense } from 'react'
 import { Link, useLocation, Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
-const NAV = [
-  { label: 'Dashboard', to: '/admin', icon: '⊞', exact: true },
-  { label: 'Statistik', to: '/admin/statistik', icon: '📊' },
-  { label: 'Profil Sekolah', to: '/admin/profil', icon: '🏫' },
-  { label: 'Akademik', to: '/admin/akademik', icon: '📚' },
-  { label: 'Berita', to: '/admin/berita', icon: '📰' },
-  { label: 'Pengumuman', to: '/admin/pengumuman', icon: '📢' },
-  { label: 'Ekskul', to: '/admin/ekskul', icon: '⚽' },
-  { label: 'Prestasi', to: '/admin/prestasi', icon: '🏆' },
-  { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
-  { label: 'Halaman & Tab', to: '/admin/halaman', icon: '📄' },
-  { label: 'Pengaturan Akun', to: '/admin/akun', icon: '🔑' },
+interface ItemNav {
+  label: string
+  to: string
+  icon: string
+  exact?: boolean
+}
+
+/**
+ * Menu dikelompokkan menurut seberapa sering isinya disentuh: "Konten" untuk
+ * yang diperbarui hampir tiap pekan, "Data Sekolah" untuk keterangan yang
+ * jarang berubah, dan "Pengaturan" untuk urusan struktur situs serta akun.
+ */
+const KELOMPOK_NAV: { judul?: string; item: ItemNav[] }[] = [
+  {
+    item: [
+      { label: 'Dashboard', to: '/admin', icon: '⊞', exact: true },
+    ],
+  },
+  {
+    judul: 'Konten',
+    item: [
+      { label: 'Berita', to: '/admin/berita', icon: '📰' },
+      { label: 'Pengumuman', to: '/admin/pengumuman', icon: '📢' },
+      { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
+      { label: 'Prestasi', to: '/admin/prestasi', icon: '🏆' },
+    ],
+  },
+  {
+    judul: 'Data Sekolah',
+    item: [
+      { label: 'Profil Sekolah', to: '/admin/profil', icon: '🏫' },
+      { label: 'Statistik', to: '/admin/statistik', icon: '📊' },
+      { label: 'Akademik', to: '/admin/akademik', icon: '📚' },
+      { label: 'Ekskul', to: '/admin/ekskul', icon: '⚽' },
+    ],
+  },
+  {
+    judul: 'Pengaturan',
+    item: [
+      { label: 'Halaman & Tab', to: '/admin/halaman', icon: '📄' },
+      { label: 'Pengaturan Akun', to: '/admin/akun', icon: '🔑' },
+    ],
+  },
 ]
+
+const SEMUA_NAV = KELOMPOK_NAV.flatMap(k => k.item)
 
 /** Tombol akun di pojok kanan atas beserta menu turunnya. */
 function MenuAkun({ email, onLogout }: { email: string; onLogout: () => void }) {
@@ -117,7 +150,7 @@ export default function AdminLayout() {
   const isActive = (to: string, exact?: boolean) =>
     exact ? pathname === to : pathname.startsWith(to)
 
-  const judulHalaman = NAV.find(n => isActive(n.to, n.exact) && n.to !== '/admin')?.label ?? 'Dashboard'
+  const judulHalaman = SEMUA_NAV.find(n => isActive(n.to, n.exact) && n.to !== '/admin')?.label ?? 'Dashboard'
 
   return (
     <div className="min-h-screen bg-off-white flex">
@@ -147,18 +180,30 @@ export default function AdminLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {NAV.map(n => (
-            <Link key={n.to} to={n.to}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors no-underline rounded-sm
-                ${isActive(n.to, n.exact)
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/50 hover:text-white hover:bg-white/5'
-                }`}>
-              <span className="text-base">{n.icon}</span>
-              {n.label}
-            </Link>
+        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+          {KELOMPOK_NAV.map((kelompok, i) => (
+            <div key={kelompok.judul ?? 'utama'} className={i > 0 ? 'mt-5' : ''}>
+              {kelompok.judul && (
+                <div className="px-3 mb-1.5 text-[10px] font-bold tracking-widest uppercase text-white/25">
+                  {kelompok.judul}
+                </div>
+              )}
+              <div className="space-y-0.5">
+                {kelompok.item.map(n => (
+                  <Link key={n.to} to={n.to}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-colors no-underline rounded-sm
+                      ${isActive(n.to, n.exact)
+                        ? 'bg-white/10 text-white'
+                        : 'text-white/50 hover:text-white hover:bg-white/5'
+                      }`}>
+                    {/* Lebar ikon dipatok supaya label tiap baris tetap sejajar */}
+                    <span className="w-5 flex-shrink-0 text-base text-center leading-none">{n.icon}</span>
+                    {n.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
       </aside>
