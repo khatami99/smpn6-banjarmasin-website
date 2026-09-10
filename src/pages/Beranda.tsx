@@ -113,13 +113,15 @@ export default function Beranda() {
             </span>
           </div>
 
-          <h1 className="font-serif text-[clamp(44px,5.5vw,68px)] font-normal leading-[1.05] text-ink mb-8">
+          {/* text-balance meratakan panjang tiap baris; whitespace-nowrap menjaga
+              sorotan kuning tidak terpotong dan meninggalkan "6" sendirian. */}
+          <h1 className="font-serif text-[clamp(40px,5vw,64px)] font-normal leading-[1.08] text-ink mb-8 text-balance">
             Selamat Datang di{' '}
-            <span className="italic bg-yellow px-1.5">SMP Negeri 6</span>{' '}
+            <span className="italic bg-yellow px-1.5 whitespace-nowrap">SMP Negeri 6</span>{' '}
             Banjarmasin
           </h1>
 
-          <p className="text-[15px] text-ink-3 leading-[1.75] max-w-[440px] mb-11 pl-4 border-l-[3px] border-ink">
+          <p className="text-[15px] text-ink-3 leading-[1.75] max-w-[440px] mb-11 pl-4 border-l-[3px] border-ink text-pretty">
             SMPN 6 Dahlia — membangun generasi unggul, berkarakter, dan berprestasi
             di jantung Kota Banjarmasin sejak 1981.
           </p>
