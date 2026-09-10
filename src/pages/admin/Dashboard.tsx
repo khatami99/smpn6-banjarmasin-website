@@ -26,6 +26,7 @@ export default function Dashboard() {
     { label: 'Kelola Prestasi', desc: 'Data pencapaian dan penghargaan', to: '/admin/prestasi', icon: '🏆' },
     { label: 'Kelola Galeri', desc: 'Foto dokumentasi & slideshow beranda', to: '/admin/galeri', icon: '🖼️' },
     { label: 'Halaman & Tab Baru', desc: 'Buat tab sendiri di menu website', to: '/admin/halaman', icon: '📄' },
+    { label: 'Pengaturan Akun', desc: 'Ganti email dan password admin', to: '/admin/akun', icon: '🔑' },
   ]
 
   return (

@@ -13,6 +13,7 @@ const NAV = [
   { label: 'Prestasi', to: '/admin/prestasi', icon: '🏆' },
   { label: 'Galeri', to: '/admin/galeri', icon: '🖼️' },
   { label: 'Halaman & Tab', to: '/admin/halaman', icon: '📄' },
+  { label: 'Pengaturan Akun', to: '/admin/akun', icon: '🔑' },
 ]
 
 /** Tombol akun di pojok kanan atas beserta menu turunnya. */
@@ -63,6 +64,16 @@ function MenuAkun({ email, onLogout }: { email: string; onLogout: () => void }) 
             <div className="text-[11px] text-ink-4 uppercase tracking-wide">Masuk sebagai</div>
             <div className="text-[13px] text-ink font-medium break-all mt-0.5">{email}</div>
           </div>
+
+          <Link to="/admin/akun" role="menuitem"
+            onClick={() => setBuka(false)}
+            className="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-ink-3 hover:bg-off-white hover:text-ink transition-colors no-underline border-b border-border">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Pengaturan Akun
+          </Link>
 
           <a href="/" target="_blank" rel="noreferrer" role="menuitem"
             onClick={() => setBuka(false)}
