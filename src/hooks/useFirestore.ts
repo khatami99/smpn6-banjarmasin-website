@@ -4,8 +4,8 @@ import {
   updateDoc, deleteDoc, orderBy, query, where, onSnapshot,
 } from 'firebase/firestore'
 import { db } from '../lib/firebase'
-import { defaultStats, defaultProfile, defaultAkademik } from '../data/defaults'
-import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement, GaleriItem, AkademikData, HalamanKustom } from '../types'
+import { defaultStats, defaultProfile, defaultAkademik, defaultKesiswaan } from '../data/defaults'
+import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, Announcement, GaleriItem, AkademikData, HalamanKustom, KesiswaanData } from '../types'
 
 // ─── School Stats ───────────────────────────────────────────
 export function useStats() {
@@ -280,4 +280,25 @@ export function useHalaman(publishedOnly = true) {
   }
 
   return { halaman, loading, gagalMuat, addHalaman, updateHalaman, deleteHalaman }
+}
+
+// ─── Kesiswaan ───────────────────────────────────────────────
+export function useKesiswaan() {
+  const [kesiswaan, setKesiswaan] = useState<KesiswaanData>(defaultKesiswaan)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const ref = doc(db, 'settings', 'kesiswaan')
+    const unsub = onSnapshot(ref, (snap) => {
+      if (snap.exists()) setKesiswaan({ ...defaultKesiswaan, ...snap.data() } as KesiswaanData)
+      setLoading(false)
+    }, () => setLoading(false))
+    return unsub
+  }, [])
+
+  const updateKesiswaan = async (data: KesiswaanData) => {
+    await setDoc(doc(db, 'settings', 'kesiswaan'), data, { merge: true })
+  }
+
+  return { kesiswaan, loading, updateKesiswaan }
 }

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import SafeImage from '../components/SafeImage'
-import { useEkskul } from '../hooks/useFirestore'
+import { useEkskul, useKesiswaan } from '../hooks/useFirestore'
 import { usePageMeta } from '../hooks/usePageMeta'
 import type { Ekskul } from '../types'
 
@@ -14,6 +14,7 @@ const KAT_COLORS: Record<string, string> = {
 
 export default function Kesiswaan() {
   const { ekskul, loading } = useEkskul(false)
+  const { kesiswaan } = useKesiswaan()
 
   usePageMeta(
     'Kesiswaan',
@@ -39,28 +40,16 @@ export default function Kesiswaan() {
         <section className="mb-14 grid md:grid-cols-2 gap-8">
           <div>
             <div className="eyebrow mb-2">Organisasi Sekolah</div>
-            <h2 className="font-serif text-2xl text-ink mb-4">OSIS SMPN 6 Banjarmasin</h2>
-            <p className="text-ink-3 text-[15px] leading-[1.8] mb-4">
-              Organisasi Intra Sekolah (OSIS) merupakan wadah pengembangan kepemimpinan, kreativitas,
-              dan kepedulian sosial siswa. OSIS berperan aktif dalam perencanaan dan pelaksanaan
-              kegiatan sekolah.
-            </p>
-            <p className="text-ink-3 text-[15px] leading-[1.8]">
-              Pemilihan Ketua OSIS dilakukan secara demokratis setiap tahun ajaran baru,
-              melibatkan seluruh siswa dalam proses pemungutan suara.
-            </p>
+            <h2 className="font-serif text-2xl text-ink mb-4">{kesiswaan.osisJudul}</h2>
+            {/* Tiap baris pada isian admin menjadi satu paragraf */}
+            {kesiswaan.osisTeks.split(/\r?\n/).filter(t => t.trim()).map((paragraf, i) => (
+              <p key={i} className="text-ink-3 text-[15px] leading-[1.8] mb-4 last:mb-0">{paragraf}</p>
+            ))}
           </div>
           <div className="bg-surface border border-border p-6">
-            <div className="eyebrow mb-4">Program OSIS 2026/2027</div>
+            <div className="eyebrow mb-4">{kesiswaan.programJudul}</div>
             <ul className="space-y-3">
-              {[
-                'Masa Orientasi Peserta Didik (MOPD)',
-                'Peringatan Hari Besar Nasional',
-                'Pentas Seni & Kreativitas Siswa',
-                'Bakti Sosial Lingkungan Sekolah',
-                'Pekan Olahraga & Seni Antar Kelas',
-                'Kemah Pramuka Penggalang',
-              ].map(p => (
+              {kesiswaan.program.map(p => (
                 <li key={p} className="flex items-start gap-2.5 text-[13px] text-ink-3">
                   <span className="w-1.5 h-1.5 bg-yellow border border-ink flex-shrink-0 mt-1.5" />
                   {p}
@@ -152,19 +141,21 @@ export default function Kesiswaan() {
         <section className="mt-14 bg-ink p-8 md:p-10">
           <div className="max-w-2xl">
             <div className="eyebrow text-white/30 mb-2">Peraturan Sekolah</div>
-            <h2 className="font-serif text-2xl text-white mb-4">Tata Tertib Siswa</h2>
+            <h2 className="font-serif text-2xl text-white mb-4">{kesiswaan.tataTertibJudul}</h2>
             <p className="text-white/60 text-[15px] leading-[1.8] mb-6">
-              Setiap siswa wajib mematuhi tata tertib sekolah demi terciptanya lingkungan belajar
-              yang kondusif, aman, dan nyaman bagi seluruh warga sekolah.
+              {kesiswaan.tataTertibTeks}
             </p>
-            <a href="#" className="btn-black">
-              Unduh Buku Tata Tertib (PDF)
-              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" x2="12" y1="15" y2="3"/>
-              </svg>
-            </a>
+            {/* Tombol unduh hanya muncul kalau tautannya sudah diisi admin */}
+            {kesiswaan.tataTertibPdf && (
+              <a href={kesiswaan.tataTertibPdf} target="_blank" rel="noreferrer" className="btn-black">
+                Unduh Buku Tata Tertib (PDF)
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" x2="12" y1="15" y2="3"/>
+                </svg>
+              </a>
+            )}
           </div>
         </section>
 

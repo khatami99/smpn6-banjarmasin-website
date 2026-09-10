@@ -1,4 +1,4 @@
-import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, AkademikData } from '../types'
+import type { SchoolStats, SchoolProfile, NewsItem, Ekskul, Prestasi, AkademikData, KesiswaanData } from '../types'
 
 export const defaultStats: SchoolStats = {
   siswa: 1247,
@@ -130,4 +130,24 @@ export const defaultAkademik: AkademikData = {
     'Adiwiyata (Sekolah Ramah Lingkungan)',
   ],
   linkKalenderPdf: '',
+}
+
+export const defaultKesiswaan: KesiswaanData = {
+  osisJudul: 'OSIS SMPN 6 Banjarmasin',
+  osisTeks: [
+    'Organisasi Intra Sekolah (OSIS) merupakan wadah pengembangan kepemimpinan, kreativitas, dan kepedulian sosial siswa. OSIS berperan aktif dalam perencanaan dan pelaksanaan kegiatan sekolah.',
+    'Pemilihan Ketua OSIS dilakukan secara demokratis setiap tahun ajaran baru, melibatkan seluruh siswa dalam proses pemungutan suara.',
+  ].join('\n'),
+  programJudul: 'Program OSIS 2026/2027',
+  program: [
+    'Masa Orientasi Peserta Didik (MOPD)',
+    'Peringatan Hari Besar Nasional',
+    'Pentas Seni & Kreativitas Siswa',
+    'Bakti Sosial Lingkungan Sekolah',
+    'Pekan Olahraga & Seni Antar Kelas',
+    'Kemah Pramuka Penggalang',
+  ],
+  tataTertibJudul: 'Tata Tertib Siswa',
+  tataTertibTeks: 'Setiap siswa wajib mematuhi tata tertib sekolah demi terciptanya lingkungan belajar yang kondusif, aman, dan nyaman bagi seluruh warga sekolah.',
+  tataTertibPdf: '',
 }

@@ -35,6 +35,7 @@ const KELOMPOK_NAV: { judul?: string; item: ItemNav[] }[] = [
       { label: 'Profil Sekolah', to: '/admin/profil', icon: '🏫' },
       { label: 'Statistik', to: '/admin/statistik', icon: '📊' },
       { label: 'Akademik', to: '/admin/akademik', icon: '📚' },
+      { label: 'Kesiswaan', to: '/admin/kesiswaan', icon: '🎒' },
       { label: 'Ekskul', to: '/admin/ekskul', icon: '⚽' },
     ],
   },

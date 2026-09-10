@@ -27,6 +27,7 @@ const AdminPrestasi = lazy(() => import('./pages/admin/AdminPrestasi'))
 const AdminGaleri = lazy(() => import('./pages/admin/AdminGaleri'))
 const AdminHalaman = lazy(() => import('./pages/admin/AdminHalaman'))
 const AdminAkademik = lazy(() => import('./pages/admin/AdminAkademik'))
+const AdminKesiswaan = lazy(() => import('./pages/admin/AdminKesiswaan'))
 const AdminAkun = lazy(() => import('./pages/admin/AdminAkun'))
 
 function MemuatPanel() {
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="galeri" element={<AdminGaleri />} />
           <Route path="halaman" element={<AdminHalaman />} />
           <Route path="akademik" element={<AdminAkademik />} />
+          <Route path="kesiswaan" element={<AdminKesiswaan />} />
           <Route path="akun" element={<AdminAkun />} />
         </Route>
       </Routes>

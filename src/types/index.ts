@@ -131,3 +131,14 @@ export interface AkademikData {
   programUnggulan: string[]
   linkKalenderPdf: string
 }
+
+/** Isi halaman Kesiswaan — dulu hardcoded, kini bisa disunting admin. */
+export interface KesiswaanData {
+  osisJudul: string
+  osisTeks: string
+  programJudul: string
+  program: string[]
+  tataTertibJudul: string
+  tataTertibTeks: string
+  tataTertibPdf: string
+}
