@@ -8,7 +8,8 @@ export default function Footer() {
   return (
     <footer className="bg-ink text-white">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 border-b border-white/10 pb-10">
+        {/* Kolom alamat diberi porsi lebih lebar karena isinya paling panjang */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr] gap-10 border-b border-white/10 pb-10">
           {/* Brand col */}
           <div>
             <div className="font-serif text-2xl text-white mb-1">
@@ -43,25 +44,6 @@ export default function Footer() {
                   <Link to={l.to} className="text-[13px] text-white/50 hover:text-white transition-colors no-underline">
                     {l.label}
                   </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Layanan */}
-          <div>
-            <div className="text-[11px] font-bold tracking-widest uppercase text-white/30 mb-4">Layanan</div>
-            <ul className="space-y-2.5">
-              {[
-                { label: 'PPDB Online', href: '#' },
-                { label: 'Portal Siswa', href: '#' },
-                { label: 'Portal Guru', href: '#' },
-                { label: 'Perpustakaan', href: '#' },
-              ].map(l => (
-                <li key={l.label}>
-                  <a href={l.href} className="text-[13px] text-white/50 hover:text-white transition-colors no-underline">
-                    {l.label}
-                  </a>
                 </li>
               ))}
             </ul>
