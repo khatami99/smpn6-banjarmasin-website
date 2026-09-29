@@ -142,9 +142,14 @@ export default function Kesiswaan() {
           <div className="max-w-2xl">
             <div className="eyebrow text-white/30 mb-2">Peraturan Sekolah</div>
             <h2 className="font-serif text-2xl text-white mb-4">{kesiswaan.tataTertibJudul}</h2>
-            <p className="text-white/60 text-[15px] leading-[1.8] mb-6">
-              {kesiswaan.tataTertibTeks}
-            </p>
+            <div className="space-y-3 text-white/60 text-[15px] leading-[1.8] mb-6">
+              {(kesiswaan.tataTertibTeks ?? "")
+                .split("\n")
+                .filter((baris) => baris.trim() !== "")
+                .map((baris, i) => (
+                  <p key={i}>{baris}</p>
+                ))}
+            </div>
             {/* Tombol unduh hanya muncul kalau tautannya sudah diisi admin */}
             {kesiswaan.tataTertibPdf && (
               <a href={kesiswaan.tataTertibPdf} target="_blank" rel="noreferrer" className="btn-black">
